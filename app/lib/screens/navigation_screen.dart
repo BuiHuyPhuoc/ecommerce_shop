@@ -1,6 +1,6 @@
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
-import 'package:ecommerce_shop/screens/profile_screen.dart';
+import 'package:ecommerce_shop/screens/setting_screen.dart';
 import 'package:ecommerce_shop/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,20 +21,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
     HomeScreen(),
     SearchScreen(),
     CartScreen(),
-    ProfileScreen()
+    SettingScreen()
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[widget.pageNumber],
       bottomNavigationBar: GNav(
-        duration: Duration(milliseconds: 800),
+        duration: Duration(milliseconds: 600),
         selectedIndex: widget.pageNumber,
         gap: 10,
-        textStyle: GoogleFonts.lexendDeca(
-            fontSize: 18, color: Theme.of(context).colorScheme.onPrimary),
+        textStyle: GoogleFonts.manrope(
+            fontSize: 18, color: Theme.of(context).colorScheme.primary),
         iconSize: 24,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         tabs: [
           GButton(
             onPressed: () {
@@ -44,9 +44,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             },
             icon: Icons.home_outlined,
             text: 'Home',
-            iconColor: Theme.of(context).colorScheme.onPrimary,
-            iconActiveColor: Theme.of(context).colorScheme.onPrimary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.primary,
+            iconActiveColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.primary,
           ),
           GButton(
             onPressed: () {
@@ -56,9 +56,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             },
             icon: Icons.search,
             text: 'Search',
-            iconColor: Theme.of(context).colorScheme.onPrimary,
-            iconActiveColor: Theme.of(context).colorScheme.onPrimary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.primary,
+            iconActiveColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.primary,
           ),
           GButton(
             onPressed: () {
@@ -68,9 +68,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             },
             icon: Icons.shopping_cart_outlined,
             text: 'Cart',
-            iconColor: Theme.of(context).colorScheme.onPrimary,
-            iconActiveColor: Theme.of(context).colorScheme.onPrimary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.primary,
+            iconActiveColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.primary,
           ),
           GButton(
             onPressed: () {
@@ -80,9 +80,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             },
             icon: Icons.person_outline_rounded,
             text: 'Profile',
-            iconColor: Theme.of(context).colorScheme.onPrimary,
-            iconActiveColor: Theme.of(context).colorScheme.onPrimary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            iconColor: Theme.of(context).colorScheme.primary,
+            iconActiveColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.primary,
           )
         ],
       ),

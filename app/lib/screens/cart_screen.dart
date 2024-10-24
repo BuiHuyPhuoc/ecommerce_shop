@@ -1,5 +1,5 @@
-import 'package:ecommerce_shop/screens/models/product.dart';
-import 'package:ecommerce_shop/screens/widgets/custom_app_bar.dart';
+import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
