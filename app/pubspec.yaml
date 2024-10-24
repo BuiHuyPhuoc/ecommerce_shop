@@ -18,6 +18,13 @@ dependencies:
   provider: ^5.0.0
   google_nav_bar: ^5.0.6
   fluttertoast: ^8.2.8
+  shared_preferences: ^2.3.2
+  dio: ^5.7.0
+  font_awesome_flutter: ^10.7.0
+  tuple: ^2.0.2
+  firebase_core: ^3.6.0
+  firebase_storage: ^12.3.4
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

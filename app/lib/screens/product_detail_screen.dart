@@ -1,6 +1,6 @@
 import 'package:ecommerce_shop/const.dart';
-import 'package:ecommerce_shop/screens/widgets/cart_button.dart';
-import 'package:ecommerce_shop/screens/widgets/custom_app_bar.dart';
+import 'package:ecommerce_shop/widgets/cart_button.dart';
+import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

@@ -1,5 +1,5 @@
-import 'package:ecommerce_shop/screens/widgets/custom_toast.dart';
-import 'package:ecommerce_shop/screens/widgets/item_payment_widget.dart';
+import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/item_payment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
