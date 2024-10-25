@@ -203,14 +203,7 @@ Future<void> UpdateAvatar(BuildContext context) async {
       Navigator.pop(context);
       return;
     }
-
-    // Options options = Options(
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //     'Content-Type': 'application/json', // Đảm bảo kiểu nội dung
-    //   },
-    // );
-    var _data = jsonEncode(urlImage) ; // Đảm bảo dữ liệu được gửi dưới dạng JSON
+    var _data = jsonEncode(urlImage) ;
     var _options = Options(
       headers: {
         'Content-Type': 'application/json',

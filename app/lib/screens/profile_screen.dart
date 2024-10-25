@@ -3,7 +3,6 @@ import 'package:ecommerce_shop/services/customer_services.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfileScreen extends StatefulWidget {

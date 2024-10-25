@@ -53,10 +53,8 @@ Future<bool> RequestNewToken() async {
       );
       if (res.statusCode == 200) {
         String jwtToken = res.data['token'];
-        String jwtRefreshToken = res.data['refreshToken'];
 
         await preferences.setString('token', jwtToken);
-        await preferences.setString('refreshToken', jwtRefreshToken);
         return true;
       } else {
         return false;

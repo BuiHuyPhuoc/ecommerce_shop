@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ShopoesAPI.Models;
 
@@ -15,13 +16,15 @@ public partial class Customer
 
     public string? AvatarImageUrl { get; set; }
 
+    [JsonIgnore]
     public virtual Account? Account { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
-
     public virtual Role IdRoleNavigation { get; set; } = null!;
+    [JsonIgnore]
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    [JsonIgnore]
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

@@ -330,26 +330,6 @@ namespace ShopoesAPI.Controllers
                 //var newRefreshToken = GenerateRefreshToken();
                 return Ok(new { Token = newJwtToken});
             }
-            //var dbAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.RefreshToken.Token == refreshToken);
-            //if (dbAccount == null) return Unauthorized("Invalid Refresh Token");
-
-            //if (!(dbAccount.RefreshToken.Revoked == null)) return Unauthorized("Expired or revoked refresh token");
-
-            //var dbCustomer = await _context.Customers.FindAsync(dbAccount.IdCustomer);
-
-            ////var newJwtToken = CreateToken(dbCustomer!, dbAccount.Email);
-
-            ////var newRefreshToken = GenerateRefreshToken();
-
-            //dbAccount.RefreshToken = newRefreshToken;
-
-            //_context.RefreshTokens.Update(dbAccount.RefreshToken);
-            //_context.Accounts.Update(dbAccount);
-
-            //await _context.SaveChangesAsync();
-
-            //// Trả về JWT token mới và refresh token mới
-            //return Ok(new { Token = newJwtToken, RefreshToken = newRefreshToken.Token });
         }
 
         [HttpPost("DeleteCustomer")]

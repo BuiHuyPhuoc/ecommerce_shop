@@ -1,23 +1,31 @@
-import 'dart:async';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
-import 'package:ecommerce_shop/screens/signin_screen.dart';
-import 'package:ecommerce_shop/services/customer_services.dart';
+import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/services/product_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key, required this.customerDTO});
+  CustomerDTO customerDTO;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<CustomerDTO?> nameUser;
+  late List<Product> product;
+  late List<Product> saleProduct;
+  bool isLoading = true;
 
-  Future<void> GetData() async {
-    nameUser = GetCustomerDTOByJwtToken();
+  void GetData() async {
+    product = await GetProduct();
+    saleProduct = await GetSaleProduct();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -28,147 +36,126 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        body: FutureBuilder(
-          future: nameUser,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasData) {
-              if (snapshot.data == null) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignInScreen(),
-                    ),
-                    (dynamic Route) => false);
-                return Container();
-              } else {
-                String nameCustomer = snapshot.data!.name;
-                return SingleChildScrollView(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        HomePageAppBar(context, nameCustomer),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 60,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 11,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      contentPadding:
-                                          EdgeInsets.only(top: 12, left: 25),
-                                      border: InputBorder.none,
-                                      prefixIcon: Icon(
-                                        Icons.search,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                      hintText: "Find your favorites shoes",
-                                      hintStyle: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withOpacity(0.5)),
-                                    ),
-                                  ),
-                                ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              children: [
+                HomePageAppBar(context, widget.customerDTO.name),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 60,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 11,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.only(top: 12, left: 25),
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                height: 60,
-                                child: AspectRatio(
-                                  aspectRatio: 1 / 1,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface),
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.filter_alt,
-                                        color: Color(0xffA3FFD6),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
+                              hintText: "Find your favorites shoes",
+                              hintStyle: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.5)),
+                            ),
                           ),
                         ),
-                        SizedBox(height: 10),
-                        HomePageHeading(
-                            context: context, title: "Giảm giá sâu"),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 300,
-                          width: double.infinity,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 5 / 8,
-                                child: ItemCard(context: context),
-                              )
-                            ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        height: 60,
+                        child: AspectRatio(
+                          aspectRatio: 1 / 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Theme.of(context).colorScheme.surface),
+                            child: Center(
+                              child: Icon(
+                                Icons.filter_alt,
+                                color: Color(0xffA3FFD6),
+                              ),
+                            ),
                           ),
                         ),
-                        SizedBox(height: 10),
-                        HomePageHeading(
-                            context: context, title: "Các sản phẩm"),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        DynamicHeightGridView(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 10,
-                          crossAxisCount: 2,
-                          builder: (BuildContext context, int index) {
-                            return ItemCard(context: context);
-                          },
-                          itemCount: 10,
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                );
-              }
-            } else {
-              Future.microtask(() => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (builder) => SignInScreen()),
-                  (dynamic Route) => false));
-            }
-            return Container();
-          },
+                ),
+                SizedBox(height: 10),
+                HomePageHeading(context: context, title: "Giảm giá sâu"),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 300,
+                  width: double.infinity,
+                  child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return AspectRatio(
+                          aspectRatio: 5 / 8,
+                          child: ItemCard(
+                              context: context, product: saleProduct[index]),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(
+                          width: 10,
+                        );
+                      },
+                      itemCount: saleProduct.length),
+                ),
+                SizedBox(height: 10),
+                HomePageHeading(context: context, title: "Các sản phẩm"),
+                SizedBox(
+                  height: 10,
+                ),
+                DynamicHeightGridView(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  builder: (BuildContext context, int index) {
+                    return ItemCard(context: context, product: product[index]);
+                  },
+                  itemCount: product.length,
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -204,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget ItemCard({required BuildContext context}) {
+  Widget ItemCard({required BuildContext context, required Product product}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
@@ -221,8 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                        image:
-                            AssetImage("assets/images/AIR+FORCE+1+'07 (1).png"),
+                        image: NetworkImage(product.imageProduct),
                         fit: BoxFit.fill),
                   ),
                 ),
@@ -247,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     child: Text(
-                      "Nike",
+                      product.idBrandNavigation.nameBrand,
                       style: GoogleFonts.montserrat(
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
@@ -264,12 +250,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: Text(
-                  "Nike Air Force 1 Super Long Name",
+                  product.nameProduct,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.manrope(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Theme.of(context).colorScheme.primary),
                 ),
               ),
@@ -292,25 +278,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Text(
-            "1.200.000đ",
-            style: GoogleFonts.manrope(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
+          (product.newPrice != null)
+              ? Text(
+                  StringFormat.ConvertMoneyToString(product.newPrice!),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+              : Text(
+                  StringFormat.ConvertMoneyToString(product.priceProduct),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
           SizedBox(
             width: 10,
           ),
-          Text(
-            "2.000.000đ",
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
-              decoration: TextDecoration.lineThrough,
-            ),
-          )
+          (product.newPrice != null && product.newPrice != product.priceProduct)
+              ? Text(
+                  "2.000.000đ",
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                )
+              : Container()
         ],
       ),
     );

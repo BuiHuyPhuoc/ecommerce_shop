@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ShopoesAPI.Models;
 
@@ -11,9 +12,9 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public double PriceProduct { get; set; }
+    public decimal PriceProduct { get; set; }
 
-    public double? NewPrice { get; set; }
+    public decimal? NewPrice { get; set; }
 
     public int IdCategory { get; set; }
 
@@ -22,10 +23,10 @@ public partial class Product
     public string? ImageProduct { get; set; }
 
     public bool IsValid { get; set; }
-
     public virtual Brand IdBrandNavigation { get; set; } = null!;
-
     public virtual Category IdCategoryNavigation { get; set; } = null!;
-
+    [JsonIgnore]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public virtual ICollection<ProductVarient> ProductVarients { get; set; } = new List<ProductVarient>();
 }

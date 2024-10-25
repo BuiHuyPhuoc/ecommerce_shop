@@ -7,6 +7,8 @@ const lightColorScheme = ColorScheme(
   primary: Color(0xff000000),
   onPrimary: Color(0xFFFFFFFF),
   secondary: Color(0xFFe2e825),
+  primaryFixed: Color(0xff000000),
+  onPrimaryFixed: Color(0xFFFFFFFF),
   onSecondary: Color(0xff000000),
   error: Color(0xFFBA1A1A),
   onError: Color(0xFFFFFFFF),
@@ -23,24 +25,25 @@ const lightColorScheme = ColorScheme(
 );
 
 const darkColorScheme = ColorScheme(
-  brightness: Brightness.dark,
-  primary: Color(0xFFFFFFFF),
-  onPrimary: Color(0xFF31363F),
-  secondary: Color(0xFF31363F),
-  onSecondary: Color(0xFFEEEEEE),
-  error: Color.fromARGB(255, 255, 0, 0),
-  onError: Color(0xFFFFFFFF),
-  surface: Color(0xFF31363F),
-  onSurface: Color(0xFFFFFFFF),
-  shadow: Color(0xFFEEEEEE),
-  outline: Color(0xFFFFFF),
-  outlineVariant: Color(0xFFEEE5E9),
-  primaryContainer: Color(0xFF97DBDF),
-  onPrimaryContainer: Color(0xff222831),
-  secondaryContainer: Color(0xFFEEE5E9),
-  onSecondaryContainer: Color(0xff222831),
-  background: Color(0xff222831)
-);
+    brightness: Brightness.dark,
+    primary: Color(0xFFFFFFFF),
+    onPrimary: Color(0xFF31363F),
+    primaryFixed: Color(0xff000000),
+    onPrimaryFixed: Color(0xFFFFFFFF),
+    secondary: Color(0xFF31363F),
+    onSecondary: Color(0xFFEEEEEE),
+    error: Color.fromARGB(255, 255, 0, 0),
+    onError: Color(0xFFFFFFFF),
+    surface: Color(0xFF31363F),
+    onSurface: Color(0xFFFFFFFF),
+    shadow: Color(0xFFEEEEEE),
+    outline: Color(0xFFFFFF),
+    outlineVariant: Color(0xFFEEE5E9),
+    primaryContainer: Color(0xFF97DBDF),
+    onPrimaryContainer: Color(0xff222831),
+    secondaryContainer: Color(0xFFEEE5E9),
+    onSecondaryContainer: Color(0xff222831),
+    background: Color.fromARGB(255, 30, 35, 43));
 
 ThemeData lightMode = ThemeData(
   useMaterial3: true,
@@ -51,14 +54,13 @@ ThemeData lightMode = ThemeData(
       backgroundColor: WidgetStateProperty.all<Color>(
         lightColorScheme.primary,
       ),
-      foregroundColor:
-          WidgetStateProperty.all<Color>(Colors.white),
-      elevation: WidgetStateProperty.all<double>(5.0), 
+      foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+      elevation: WidgetStateProperty.all<double>(5.0),
       padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.symmetric(horizontal: 20, vertical: 18)),
       shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), 
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
     ),
@@ -72,7 +74,7 @@ ThemeData lightMode = ThemeData(
     bodyMedium: TextStyle(color: Colors.black),
   ),
 );
-  
+
 ThemeData darkMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
