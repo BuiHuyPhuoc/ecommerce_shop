@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ShopoesAPI.Models;
 
@@ -16,6 +17,6 @@ public partial class RefreshToken
     public DateTime? Revoked { get; set; }
 
     public int AccountId { get; set; }
-
+    [JsonIgnore]
     public virtual Account Account { get; set; } = null!;
 }

@@ -4,15 +4,22 @@ import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class ProductDetailScreen extends StatefulWidget {
-  const ProductDetailScreen({super.key});
-
+  ProductDetailScreen({super.key, required this.idProduct});
+  int idProduct;
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   List<int> _shoeSize = [36, 37, 38, 39];
+  List<String> getImages = [];
+  List<int> getVarients = [];
+  void GetData() {
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

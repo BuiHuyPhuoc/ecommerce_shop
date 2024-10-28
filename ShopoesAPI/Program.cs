@@ -9,7 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ShopoesAPI.Models;
 using ShopoesAPI.Services;
+using System.ComponentModel;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace ShopoesAPI
@@ -22,8 +24,15 @@ namespace ShopoesAPI
 
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddControllers().AddJsonOptions(x =>
-                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals;
+                options.JsonSerializerOptions.WriteIndented = true;
+                options.JsonSerializerOptions.Converters.Add(new DoubleConverter());
+                options.JsonSerializerOptions.Converters.Add(new DecimalConverter());
+            });
             //builder.Services.AddControllers().AddNewtonsoftJson(x =>
             //    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -101,7 +110,34 @@ namespace ShopoesAPI
 
             app.MapControllers();
             app.Run();
+
+
         }
+        public class DoubleConverter : JsonConverter<double>
+        {
+            public override double Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return reader.GetDouble();
+            }
+
+            public override void Write(Utf8JsonWriter writer, double value, JsonSerializerOptions options)
+            {
+                writer.WriteNumberValue(value % 1 == 0 ? value + 0.0 : value);
+            }
+        }
+        public class DecimalConverter : JsonConverter<decimal>
+        {
+            public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return reader.GetDecimal();
+            }
+
+            public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options)
+            {
+                writer.WriteNumberValue(value % 1 == 0 ? value + 0.0m : value);
+            }
+        }
+
     }
 
 }

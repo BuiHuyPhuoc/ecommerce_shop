@@ -1,11 +1,13 @@
+import 'package:ecommerce_shop/models/customerDTO.dart';
 import 'package:ecommerce_shop/models/product.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
-
+  CartScreen({super.key, required this.customerDTO});
+  CustomerDTO customerDTO;
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
@@ -14,6 +16,13 @@ class _CartScreenState extends State<CartScreen> {
   late List<Product> _product;
   late List<bool> _indexSelectedProduct;
   int _countSelected = 0;
+
+    @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
 
   void CountSelected() {
     setState(() {
@@ -42,43 +51,7 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
-    _product = [
-      Product(
-          nameProduct: "Nike nè",
-          brandProduct: "Nike",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Nike nè",
-          brandProduct: "Nike",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Adidas nè",
-          brandProduct: "Adidas",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Adidas nè",
-          brandProduct: "Adidas",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Puma nè",
-          brandProduct: "Puma",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Puma nè",
-          brandProduct: "Puma",
-          price: 1000000,
-          salePrice: 900000),
-      Product(
-          nameProduct: "Decathlon nè",
-          brandProduct: "Decathlon",
-          price: 1000000,
-          salePrice: 900000)
-    ];
+    _product = [];
     _indexSelectedProduct =
         List<bool>.generate(_product.length, (index) => false);
     CountSelected();
@@ -257,7 +230,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    product.brandProduct,
+                    product.idBrandNavigation.nameBrand,
                     style: GoogleFonts.manrope(
                       fontSize: 16,
                       color: Theme.of(context)
@@ -271,7 +244,7 @@ class _CartScreenState extends State<CartScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        product.salePrice.toString(),
+                        product.newPrice.toString(),
                         style: GoogleFonts.manrope(
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShopoesAPI.DTOs;
 using ShopoesAPI.Function;
 using ShopoesAPI.Models;
 
@@ -17,12 +18,13 @@ namespace ShopoesAPI.Controllers
         {
             _context = context;
         }
-        
+
         [HttpGet]
         [Route("GetAllProduct")]
-        public async Task<ActionResult<List<Product>>> GetAllProduct()
+        public async Task<ActionResult<List<Product>>> GetAllProduct() 
         {
-            var dbProducts = await _context.Products.Where(x => x.IsValid == true).ToListAsync();
+            var dbProducts = await _context.Products.Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation).Where(x => x.IsValid == true).OrderByDescending(x => x.NameProduct).Take(10).ToListAsync();
             return Ok(dbProducts);
         }
 
@@ -30,24 +32,29 @@ namespace ShopoesAPI.Controllers
         [Route("GetProductByName")]
         public async Task<ActionResult<List<Product>>> GetProductByName(string name)
         {
-            var searchTerm = StringFormat.RemoveDiacritics(name);
-            var results = await _context.Products.Where(x => EF.Functions.Like(x.NameProduct, searchTerm) && x.IsValid == true).ToListAsync();
+            var results = await _context.Products.Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation).Where(x => EF.Functions.Like(x.NameProduct, $"%{name}%") && x.IsValid == true).ToListAsync();
             return Ok(results);
         }
 
         [HttpGet]
         [Route("GetProductById")]
-        public async Task<ActionResult<List<Product>>> GetProductById(int id)
+        public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var dbProduct = await _context.Products.FindAsync(id);
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation).Include(x => x.ProductVarients).Include(x => x.ProductImages).FirstOrDefaultAsync(x => x.Id == id);
+            if (dbProduct == null)
+            {
+                return Conflict("Product with this id not found");
+            }
             return Ok(dbProduct);
         }
-        
+
         [HttpGet]
         [Route("GetProductByCategory")]
         public async Task<ActionResult<List<Product>>> GetProductByCategory(int idCateogry)
         {
-            var dbProduct = await _context.Products.Where(x => x.IdCategory == idCateogry && x.IsValid == true).ToListAsync();
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).Where(x => x.IdCategory == idCateogry && x.IsValid == true).ToListAsync();
             return Ok(dbProduct);
         }
 
@@ -55,22 +62,52 @@ namespace ShopoesAPI.Controllers
         [Route("GetProductByBrand")]
         public async Task<ActionResult<List<Product>>> GetProductByBrand(int idBrand)
         {
-            var dbProduct = await _context.Products.Where(x => x.IdBrand == idBrand && x.IsValid == true).ToListAsync();
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).Where(x => x.IdBrand == idBrand && x.IsValid == true).ToListAsync();
             return Ok(dbProduct);
         }
 
+        [HttpGet]
+        [Route("GetSaleProduct")]
+        public async Task<ActionResult<List<Product>>> GetSaleProduct()
+        {
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation)
+                .Where( x => x.IsValid == true && x.PriceProduct != x.NewPrice).ToListAsync();
+            return Ok(dbProduct);
+        }
 
-        // Update
+        [HttpGet("GetProducts")]
+        public async Task<IActionResult> GetProducts([FromQuery] int? brand, [FromQuery] int? category)
+        {
+            var products = _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).AsQueryable();
+
+            // Lọc theo brand nếu được truyền vào
+            if (!(brand == null))
+            {
+                products = products.Where(p => p.IdBrand == brand);
+            }
+
+            // Lọc theo category nếu được truyền vào
+            if (!(category == null))
+            {
+                products = products.Where(p => p.IdCategory == category);
+            }
+
+            var result = await products.ToListAsync();
+
+            return Ok(result);
+        }
 
         [HttpPut]
         [Route("UpdateProduct")]
-        public async Task<ActionResult<List<Product>>> UpdateProduct(Product product)
+        public async Task<IActionResult> UpdateProduct(Product product)
         {
-            var dbProduct = _context.Products.Find(product.Id);
+            var dbProduct = await _context.Products.FindAsync(product.Id);
             if (dbProduct is null)
             {
                 return BadRequest("Product is not found");
-            } else
+            }
+            else
             {
                 dbProduct.NameProduct = product.NameProduct;
                 dbProduct.Description = product.Description;
@@ -82,9 +119,11 @@ namespace ShopoesAPI.Controllers
                 dbProduct.IdBrandNavigation = product.IdBrandNavigation;
                 dbProduct.IdCategoryNavigation = product.IdCategoryNavigation;
                 await _context.SaveChangesAsync();
-                return Ok(dbProduct);
+                return Ok();
             }
         }
+
+        
 
     }
 }

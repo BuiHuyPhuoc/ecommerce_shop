@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ShopoesAPI.Models;
 
@@ -22,8 +23,7 @@ public partial class Account
     public string? VerificationToken { get; set; }
 
     public DateTime? VerifiedAt { get; set; }
-
     public virtual Customer IdNavigation { get; set; } = null!;
-
+    [JsonIgnore]
     public virtual RefreshToken? RefreshToken { get; set; }
 }
