@@ -118,7 +118,8 @@ Future<CustomerDTO?> GetCustomerDTOByJwtToken() async {
   }
 }
 
-void UpdateProfile(BuildContext context, String name, String phone) async {
+Future<void> UpdateProfile(
+    BuildContext context, String name, String phone) async {
   LoadingDialog(context);
   final url = 'https://10.0.2.2:7277/api/Customer/UpdateCustomer';
   SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -144,28 +145,43 @@ void UpdateProfile(BuildContext context, String name, String phone) async {
           "phone": phone,
         },
       );
-      SuccessToast(context: context, message: "Update successfully",).ShowToast();
       Navigator.pop(context);
+      SuccessToast(
+        context: context,
+        message: "Update successfully",
+      ).ShowToast();
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         bool checkGetNewToken = await RequestNewToken();
         if (checkGetNewToken) {
           SharedPreferences preferences = await SharedPreferences.getInstance();
           token = preferences.getString("token");
-          await _dio.put(
-            url,
-            options: Options(
-              headers: {
-                'Authorization': 'Bearer $token',
+          try {
+            await _dio.put(
+              url,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                },
+              ),
+              data: {
+                "name": name,
+                "phone": phone,
               },
-            ),
-            data: {
-              "name": name,
-              "phone": phone,
-            },
-          );
-          SuccessToast(context: context, message: "Update successfully",).ShowToast();
-          Navigator.pop(context);
+            );
+            SuccessToast(
+              context: context,
+              message: "Update successfully",
+            ).ShowToast();
+          } on DioException catch (e) {
+            print(e.message);
+            WarningToast(
+              context: context,
+              message: "Failed",
+            ).ShowToast();
+          } finally {
+            Navigator.pop(context);
+          }
         } else {
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(

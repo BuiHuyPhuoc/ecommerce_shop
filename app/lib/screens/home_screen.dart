@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        HomePageAppBar(context, widget.customerDTO.name),
+                        HomePageAppBar(context),
                         SizedBox(
                           height: 10,
                         ),
@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         borderRadius: BorderRadius.circular(20),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .surface),
+                                            .primaryFixed),
                                     child: Center(
                                       child: Icon(
                                         Icons.filter_alt,
@@ -332,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  HomePageAppBar(BuildContext context, String nameCustomer) {
+  HomePageAppBar(BuildContext context) {
     return Container(
       width: double.infinity,
       child: Row(
@@ -345,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage("assets/images/shoe_icon.png"),
+                  image: NetworkImage(widget.customerDTO.avatarImageUrl),
                   fit: BoxFit.fill,
                 ),
                 border: Border.all(color: Colors.white, width: 2)),
@@ -359,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  nameCustomer,
+                  widget.customerDTO.name,
                   style: GoogleFonts.varela(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
