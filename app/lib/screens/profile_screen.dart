@@ -1,6 +1,11 @@
+import 'dart:io';
+import 'package:ecommerce_shop/models/ChangePasswordRequest.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
+import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/services/customer_services.dart';
+import 'package:ecommerce_shop/widgets/custom_text_field.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +20,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController nameController;
   late TextEditingController phoneController;
+  late TextEditingController oldPasswordController;
+  late TextEditingController newPasswordController;
+  late TextEditingController confirmNewPasswordController;
   late int label = 0;
   late Future<CustomerDTO?> customer;
 
@@ -24,9 +32,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    GetData();
     nameController = new TextEditingController();
     phoneController = new TextEditingController();
+    oldPasswordController = new TextEditingController();
+    newPasswordController = new TextEditingController();
+    confirmNewPasswordController = new TextEditingController();
     super.initState();
   }
 
@@ -34,11 +44,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     nameController.dispose();
     phoneController.dispose();
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    GetData();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -53,6 +67,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
               if (snapshot.hasData) {
                 CustomerDTO? getCustomer = snapshot.data;
+                if (getCustomer == null) {
+                  Logout(context);
+                }
                 String imagePath = getCustomer!.avatarImageUrl;
                 return Container(
                   padding: EdgeInsets.all(20),
@@ -170,78 +187,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                           SizedBox(height: 20),
-                          Container(
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color:
-                                    Theme.of(context).colorScheme.background),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InformationField(
-                                  controller: nameController,
-                                  icon: Icons.person,
-                                  title: "Name",
-                                  content: getCustomer.name,
-                                ),
-                                SizedBox(height: 20),
-                                InformationField(
-                                    controller: phoneController,
-                                    isNumberOnly: true,
-                                    keyboardType: TextInputType.number,
-                                    icon: Icons.phone,
-                                    title: "Phone",
-                                    content: getCustomer.phone),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          GestureDetector(
-                            onTap: () {
-                              String name = nameController.text.trim();
-                              String phone = phoneController.text.trim();
-                              if (name == "" && phone == "") {
-                                NotifyToast(
-                                  context: context,
-                                  message: "Nothing has changed",
-                                ).ShowToast();
-                                return;
-                              }
 
-                              if (name == "") {
-                                name = getCustomer.name;
-                              }
-
-                              if (phone == "") {
-                                phone = getCustomer.phone;
-                              }
-
-                              setState(() {
-                                UpdateProfile(context, name, phone);
-                                nameController.clear();
-                                phoneController.clear();
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 14),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Theme.of(context).colorScheme.primary),
-                              child: Center(
-                                child: Text(
-                                  "UPDATE",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
+                          (label == 0)
+                              ? PersonalInformation(getCustomer)
+                              : Security()
+                          //PersonalInformation(getCustomer)
                         ],
                       ),
                     ],
@@ -285,6 +235,191 @@ class _ProfileScreenState extends State<ProfileScreen> {
               fontWeight: FontWeight.bold,
               fontSize: 16),
         ),
+      ),
+    );
+  }
+
+  Widget Security() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Theme.of(context).colorScheme.background),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomTextField(
+                    controller: oldPasswordController,
+                    context: context,
+                    prefixIcon: Icon(Icons.lock),
+                    hintText: "Your old password"),
+                SizedBox(height: 12),
+                CustomTextField(
+                    controller: newPasswordController,
+                    context: context,
+                    prefixIcon: Icon(Icons.lock),
+                    hintText: "Your new password"),
+                SizedBox(height: 12),
+                CustomTextField(
+                    controller: confirmNewPasswordController,
+                    context: context,
+                    prefixIcon: Icon(Icons.lock),
+                    hintText: "Confirm your new password"),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          GestureDetector(
+            onTap: () async {
+              String oldPassword = oldPasswordController.text.trim();
+              String newPassword = newPasswordController.text.trim();
+              String confirmNewPassword =
+                  confirmNewPasswordController.text.trim();
+              if (oldPassword.isEmpty ||
+                  newPassword.isEmpty ||
+                  confirmNewPassword.isEmpty) {
+                WarningToast(
+                  context: context,
+                  message: "Missing information",
+                ).ShowToast();
+                return;
+              } else {
+                var request = new Changepasswordrequest(
+                    currentPassword: oldPassword,
+                    newPassword: newPassword,
+                    confirmPassword: confirmNewPassword);
+                LoadingDialog(context);
+                try {
+                  await ChangePassword(request: request);
+                  SuccessToast(
+                    context: context,
+                    message: "Change password successfully",
+                  ).ShowToast();
+                  oldPasswordController.clear();
+                  newPasswordController.clear();
+                  confirmNewPasswordController.clear();
+                } on SocketException catch (e) {
+                  // Xử lý lỗi kết nối mạng
+                  WarningToast(
+                    context: context,
+                    message: 'Network error: ${e.toString()}',
+                  ).ShowToast();
+                } catch (e) {
+                  WarningToast(
+                    context: context,
+                    message: e.toString(),
+                  ).ShowToast();
+                  return;
+                } finally {
+                  Navigator.pop(context);
+                }
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Theme.of(context).colorScheme.primary),
+              child: Center(
+                child: Text(
+                  "Change password",
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget PersonalInformation(CustomerDTO getCustomer) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Theme.of(context).colorScheme.background),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InformationField(
+                  controller: nameController,
+                  icon: Icons.person,
+                  title: "Name",
+                  content: getCustomer.name,
+                ),
+                SizedBox(height: 20),
+                InformationField(
+                    controller: phoneController,
+                    isNumberOnly: true,
+                    keyboardType: TextInputType.number,
+                    icon: Icons.phone,
+                    title: "Phone",
+                    content: getCustomer.phone),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+          GestureDetector(
+            onTap: () async {
+              // thay đổi thông tin cá nhân
+              String name = nameController.text.trim();
+              String phone = phoneController.text.trim();
+              if (name == "" && phone == "") {
+                NotifyToast(
+                  context: context,
+                  message: "Nothing has changed",
+                ).ShowToast();
+                return;
+              }
+
+              if (name == "") {
+                name = getCustomer.name;
+              }
+
+              if (phone == "") {
+                phone = getCustomer.phone;
+              }
+              UpdateProfile(context, name, phone);
+              nameController.clear();
+              phoneController.clear();
+              await GetData();
+              setState(() {});
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Theme.of(context).colorScheme.primary),
+              child: Center(
+                child: Text(
+                  "Update Information",
+                  style: GoogleFonts.manrope(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

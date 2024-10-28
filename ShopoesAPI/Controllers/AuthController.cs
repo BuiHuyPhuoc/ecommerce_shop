@@ -247,7 +247,7 @@ namespace ShopoesAPI.Controllers
             var dbAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.Email == emailClaim);
             if (dbAccount == null)
             {
-                return NotFound("User not found");
+                return BadRequest("User not found");
             }
 
             // Kiểm tra mật khẩu hiện tại
@@ -259,7 +259,7 @@ namespace ShopoesAPI.Controllers
 
             if (!ValidatePassword(request.NewPassword))
             {
-                return Conflict("Wrong format password");
+                return BadRequest("Wrong format password");
             }
             else
             {
@@ -377,7 +377,7 @@ namespace ShopoesAPI.Controllers
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:Expires"])),
+                expires: DateTime.Now.AddSeconds(Convert.ToDouble(_configuration["Jwt:Expires"])),
                 signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;

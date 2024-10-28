@@ -35,7 +35,7 @@ Widget CustomTextField(
       autocorrect: autocorrect,
       controller: controller,
       decoration: decoration ?? InputDecoration(
-        contentPadding: EdgeInsets.only(top: 12),
+        contentPadding: (prefixIcon != null) ? EdgeInsets.only(top: 12) :  EdgeInsets.only(top: 0),
         border: InputBorder.none,
         prefixIcon: prefixIcon,
         hintText: hintText,

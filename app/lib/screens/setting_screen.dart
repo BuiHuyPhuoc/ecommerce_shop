@@ -21,6 +21,14 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> GetData() async {
     customer = GetCustomerDTOByJwtToken();
+    setState(() {});
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -135,9 +143,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             builder: (builder) => ProfileScreen(),
                           ),
                         );
-                        setState(() {
-                          GetData();
-                        });
+                        GetData();
                       },
                       context: context,
                       title: "Personal Information",
@@ -161,7 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   SizedBox(height: 10),
                   GestureDetector(
                     onTap: () async {
-                      await Logout(context);
+                      Logout(context);
                     },
                     child: Container(
                       margin: EdgeInsets.only(right: 20),
@@ -178,14 +184,17 @@ class _SettingScreenState extends State<SettingScreen> {
                             Icon(
                               Icons.logout,
                               size: 24,
-                              color: Theme.of(context).colorScheme.onPrimaryFixed,
+                              color:
+                                  Theme.of(context).colorScheme.onPrimaryFixed,
                             ),
                             SizedBox(width: 10),
                             Text(
                               "Đăng xuất",
                               style: GoogleFonts.manrope(
                                 fontSize: 18,
-                                color: Theme.of(context).colorScheme.onPrimaryFixed,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryFixed,
                                 fontWeight: FontWeight.bold,
                               ),
                             )

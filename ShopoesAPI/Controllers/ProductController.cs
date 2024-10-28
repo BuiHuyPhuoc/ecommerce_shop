@@ -70,7 +70,9 @@ namespace ShopoesAPI.Controllers
         [Route("GetSaleProduct")]
         public async Task<ActionResult<List<Product>>> GetSaleProduct()
         {
-            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).Where( x => x.IsValid == true && x.PriceProduct != x.NewPrice).ToListAsync();
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation)
+                .Where( x => x.IsValid == true && x.PriceProduct != x.NewPrice).ToListAsync();
             return Ok(dbProduct);
         }
 

@@ -3,10 +3,10 @@ import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
 import 'package:ecommerce_shop/screens/setting_screen.dart';
 import 'package:ecommerce_shop/screens/search_screen.dart';
-import 'package:ecommerce_shop/screens/signin_screen.dart';
+import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/services/customer_services.dart';
+import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -21,39 +21,59 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  late CustomerDTO? nameUser;
+  late CustomerDTO? nameUser = null;
   bool isLoading = true;
-  void GetUser() async {
+
+  Future<void> _initializeUser() async {
     nameUser = await GetCustomerDTOByJwtToken();
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> checkUserAndNavigate(int pageIndex) async {
+    // Kiểm tra lại nameUser mỗi lần người dùng thay đổi nav
+    await _initializeUser();
+    if (nameUser == null) {
+      NotifyToast(
+        context: context,
+        message: "Login time out.",
+      ).ShowToast();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Logout(context);
+      });
+    } else {
+      setState(() {
+        widget.pageNumber = pageIndex;
+      });
+    }
   }
 
   @override
   void initState() {
-    GetUser();
     super.initState();
+    _initializeUser();
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
+    } else {
+      if (nameUser == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Logout(context);
+        });
+        return Container();
+      }
     }
-    if (nameUser == null) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (builder) => SignInScreen()),
-            (dynamic Route) => false);
-      });
-    }
+
     List<Widget> screens = [
       HomeScreen(
         customerDTO: nameUser!,
@@ -83,9 +103,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         tabs: [
           GButton(
             onPressed: () {
-              setState(() {
-                widget.pageNumber = 0;
-              });
+              checkUserAndNavigate(0);
             },
             icon: Icons.home_outlined,
             text: 'Home',
@@ -95,9 +113,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           GButton(
             onPressed: () {
-              setState(() {
-                widget.pageNumber = 1;
-              });
+              checkUserAndNavigate(1);
             },
             icon: Icons.search,
             text: 'Search',
@@ -107,9 +123,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           GButton(
             onPressed: () {
-              setState(() {
-                widget.pageNumber = 2;
-              });
+              checkUserAndNavigate(2);
             },
             icon: Icons.shopping_cart_outlined,
             text: 'Cart',
@@ -119,9 +133,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           GButton(
             onPressed: () {
-              setState(() {
-                widget.pageNumber = 3;
-              });
+              checkUserAndNavigate(3);
             },
             icon: Icons.person_outline_rounded,
             text: 'Profile',

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:ecommerce_shop/models/ChangePasswordRequest.dart';
 import 'package:ecommerce_shop/models/api_respond.dart';
 import 'package:ecommerce_shop/models/register_customer.dart';
-import 'package:ecommerce_shop/widgets/login_check_screen.dart';
+import 'package:ecommerce_shop/screens/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,8 +20,9 @@ Future<bool> LoginWithEmailAndPassword(String email, String password) async {
         options: Options(headers: {'Content-Type': 'application/json'}));
     if (respond.statusCode == 200) {
       // Lưu token
-      String jwtToken = respond.data['token'];
-      String jwtRefreshToken = respond.data['refreshToken'];
+      String jwtToken = jsonEncode(respond.data['token']).replaceAll("\"", "");
+      String jwtRefreshToken =
+          jsonEncode(respond.data['refreshToken']).replaceAll("\"", "");
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', jwtToken);
@@ -38,27 +41,24 @@ Future<bool> RequestNewToken() async {
   Dio _dio = Dio();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? rfsToken = await preferences.getString("refreshToken");
+
   if (rfsToken == null) {
     return false;
   } else {
     try {
-      var res = await _dio.get(
+      String encode = jsonEncode(rfsToken);
+      var res = await _dio.post(
         "https://10.0.2.2:7277/api/Auth/RefreshToken",
         options: Options(
           headers: {
             'Content-Type': 'application/json',
           },
         ),
-        data: rfsToken,
+        data: encode,
       );
-      if (res.statusCode == 200) {
-        String jwtToken = res.data['token'];
-
-        await preferences.setString('token', jwtToken);
-        return true;
-      } else {
-        return false;
-      }
+      String jwtToken = res.data['token'];
+      await preferences.setString('token', jwtToken);
+      return true;
     } on DioError catch (e) {
       print(e.message);
       return false;
@@ -66,13 +66,13 @@ Future<bool> RequestNewToken() async {
   }
 }
 
-Future<void> Logout(BuildContext context) async {
+void Logout(BuildContext context) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.remove("token");
   preferences.remove("refreshToken");
-  Navigator.pushAndRemoveUntil(
+  await Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (builder) => LoginCheckScreen()),
+      MaterialPageRoute(builder: (builder) => SignInScreen()),
       (dynamic Route) => false);
 }
 
@@ -115,5 +115,80 @@ Future<void> SendNewVerifyEmail(String email) async {
   } on DioError catch (e) {
     print(e.message);
     throw Exception("Something went wrong");
+  }
+}
+
+Future<bool> ChangePassword({required Changepasswordrequest request}) async {
+  final url = 'https://10.0.2.2:7277/api/Auth/ChangePassword';
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? token = preferences.getString("token");
+  if (token == null) {
+    throw Exception("Sign in time out");
+  }
+  Dio _dio = Dio();
+  // var _data = {
+  //   'currentPassword': request.currentPassword,
+  //   'newPassword': request.newPassword,
+  //   'confirmPassword': request.confirmPassword
+  // };
+  // var _options = Options(
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': 'Bearer $token',
+  //   },
+  // );
+  //print("Dữ liệu gửi lên: ${jsonEncode(_data)}");
+  try {
+    final response = await _dio.post(
+      url,
+      data: {
+        'currentPassword': request.currentPassword,
+        'newPassword': request.newPassword,
+        'confirmPassword': request.confirmPassword,
+      },
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print(response.data.toString());
+    return true;
+  } on DioError catch (e) {
+    if (e.response?.statusCode == 401) {
+      bool checkGetNewToken = await RequestNewToken();
+      if (checkGetNewToken) {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        token = preferences.getString("token");
+        // _options = Options(
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': 'Bearer $token',
+        //   },
+        // );
+        final response = await _dio.post(
+          url,
+          data: {
+            'currentPassword': request.currentPassword,
+            'newPassword': request.newPassword,
+            'confirmPassword': request.confirmPassword,
+          },
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+        print(response.data.toString());
+        return true;
+      } else {
+        throw Exception("Sign in time out");
+      }
+    } else {
+      print(e.response!.data);
+      throw Exception(e.response!.data);
+    }
   }
 }

@@ -90,20 +90,21 @@ Future<CustomerDTO?> GetCustomerDTOByJwtToken() async {
       if (e.response?.statusCode == 401) {
         bool checkGetNewToken = await RequestNewToken();
         if (checkGetNewToken) {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
           token = preferences.getString("token");
-          final response = await _dio.get(
-            url,
-            options: Options(
-              headers: {
-                'Authorization': 'Bearer $token',
-              },
-            ),
-          );
-          if (response.statusCode == 200) {
-            // Phản hồi thành công
+          try {
+            final response = await _dio.get(
+              url,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                },
+              ),
+            );
             CustomerDTO dbCustomer = CustomerDTO.fromMap(response.data);
             return dbCustomer;
-          } else {
+          } catch (e) {
+            print(e);
             return null;
           }
         } else {
@@ -143,11 +144,13 @@ void UpdateProfile(BuildContext context, String name, String phone) async {
           "phone": phone,
         },
       );
+      SuccessToast(context: context, message: "Update successfully",).ShowToast();
       Navigator.pop(context);
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
         bool checkGetNewToken = await RequestNewToken();
         if (checkGetNewToken) {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
           token = preferences.getString("token");
           await _dio.put(
             url,
@@ -161,6 +164,7 @@ void UpdateProfile(BuildContext context, String name, String phone) async {
               "phone": phone,
             },
           );
+          SuccessToast(context: context, message: "Update successfully",).ShowToast();
           Navigator.pop(context);
         } else {
           Navigator.pop(context);
@@ -203,7 +207,7 @@ Future<void> UpdateAvatar(BuildContext context) async {
       Navigator.pop(context);
       return;
     }
-    var _data = jsonEncode(urlImage) ;
+    var _data = jsonEncode(urlImage);
     var _options = Options(
       headers: {
         'Content-Type': 'application/json',
@@ -222,6 +226,12 @@ Future<void> UpdateAvatar(BuildContext context) async {
         bool checkGetNewToken = await RequestNewToken();
         if (checkGetNewToken) {
           token = preferences.getString("token");
+          _options = Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          );
           await _dio.post(
             url,
             options: _options,

@@ -17,6 +17,13 @@ class _CartScreenState extends State<CartScreen> {
   late List<bool> _indexSelectedProduct;
   int _countSelected = 0;
 
+    @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
+
   void CountSelected() {
     setState(() {
       _countSelected =
