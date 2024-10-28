@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 import 'package:ecommerce_shop/models/customerDTO.dart';
+import 'package:ecommerce_shop/screens/navigation_screen.dart';
 import 'package:ecommerce_shop/screens/profile_screen.dart';
 import 'package:ecommerce_shop/services/auth_services.dart';
-import 'package:ecommerce_shop/services/customer_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,13 +17,6 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  late Future<CustomerDTO?> customer;
-
-  Future<void> GetData() async {
-    customer = GetCustomerDTOByJwtToken();
-    setState(() {});
-  }
-
   @override
   void setState(fn) {
     if (mounted) {
@@ -33,7 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    GetData();
     super.initState();
   }
 
@@ -136,14 +128,20 @@ class _SettingScreenState extends State<SettingScreen> {
                         color: Theme.of(context).colorScheme.primary),
                   ),
                   SettingItem(
-                      onTap: () async {
-                        await Navigator.push(
+                      onTap: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (builder) => ProfileScreen(),
                           ),
-                        );
-                        GetData();
+                        ).then((onValue) {
+                          if (onValue == 'reload') {
+                            // Gọi hàm updateUserData trong NavigationScreen
+                            (context.findAncestorStateOfType<
+                                    NavigationScreenState>())
+                                ?.initializeUser();
+                          }
+                        });
                       },
                       context: context,
                       title: "Personal Information",

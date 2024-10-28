@@ -17,14 +17,14 @@ class NavigationScreen extends StatefulWidget {
   int pageNumber;
 
   @override
-  State<NavigationScreen> createState() => _NavigationScreenState();
+  State<NavigationScreen> createState() => NavigationScreenState();
 }
 
-class _NavigationScreenState extends State<NavigationScreen> {
+class NavigationScreenState extends State<NavigationScreen> {
   late CustomerDTO? nameUser = null;
   bool isLoading = true;
 
-  Future<void> _initializeUser() async {
+  Future<void> initializeUser() async {
     nameUser = await GetCustomerDTOByJwtToken();
     if (mounted) {
       setState(() {
@@ -35,7 +35,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Future<void> checkUserAndNavigate(int pageIndex) async {
     // Kiểm tra lại nameUser mỗi lần người dùng thay đổi nav
-    await _initializeUser();
+    await initializeUser();
     if (nameUser == null) {
       NotifyToast(
         context: context,
@@ -54,7 +54,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeUser();
+    initializeUser();
   }
 
   @override
@@ -102,8 +102,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         tabs: [
           GButton(
-            onPressed: () {
-              checkUserAndNavigate(0);
+            onPressed: () async {
+              await checkUserAndNavigate(0);
             },
             icon: Icons.home_outlined,
             text: 'Home',
@@ -112,8 +112,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             textColor: iconColor,
           ),
           GButton(
-            onPressed: () {
-              checkUserAndNavigate(1);
+            onPressed: () async {
+              await checkUserAndNavigate(1);
             },
             icon: Icons.search,
             text: 'Search',
@@ -122,8 +122,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             textColor: iconColor,
           ),
           GButton(
-            onPressed: () {
-              checkUserAndNavigate(2);
+            onPressed: () async {
+              await checkUserAndNavigate(2);
             },
             icon: Icons.shopping_cart_outlined,
             text: 'Cart',
@@ -132,8 +132,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             textColor: iconColor,
           ),
           GButton(
-            onPressed: () {
-              checkUserAndNavigate(3);
+            onPressed: () async {
+              await checkUserAndNavigate(3);
             },
             icon: Icons.person_outline_rounded,
             text: 'Profile',
