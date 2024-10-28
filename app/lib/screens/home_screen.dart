@@ -1,23 +1,35 @@
-import 'dart:async';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
-import 'package:ecommerce_shop/screens/signin_screen.dart';
-import 'package:ecommerce_shop/services/customer_services.dart';
+import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/services/product_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key, required this.customerDTO});
+  CustomerDTO customerDTO;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<CustomerDTO?> nameUser;
+  late List<Product> product;
+  late List<Product> saleProduct;
+  bool isLoading = true;
 
   Future<void> GetData() async {
-    nameUser = GetCustomerDTOByJwtToken();
+    product = await GetProduct();
+    saleProduct = await GetSaleProduct();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -30,32 +42,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: FutureBuilder(
-          future: nameUser,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.hasData) {
-              if (snapshot.data == null) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignInScreen(),
-                    ),
-                    (dynamic Route) => false);
-                return Container();
-              } else {
-                String nameCustomer = snapshot.data!.name;
+          backgroundColor: Theme.of(context).colorScheme.background,
+          body: FutureBuilder(
+            future: GetData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.connectionState == ConnectionState.done) {
                 return SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        HomePageAppBar(context, nameCustomer),
+                        HomePageAppBar(context, widget.customerDTO.name),
                         SizedBox(
                           height: 10,
                         ),
@@ -129,15 +130,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           height: 300,
                           width: double.infinity,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 5 / 8,
-                                child: ItemCard(context: context),
-                              )
-                            ],
-                          ),
+                          child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return AspectRatio(
+                                  aspectRatio: 5 / 8,
+                                  child: ItemCard(
+                                      context: context,
+                                      product: saleProduct[index]),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return SizedBox(
+                                  width: 10,
+                                );
+                              },
+                              itemCount: saleProduct.length),
                         ),
                         SizedBox(height: 10),
                         HomePageHeading(
@@ -152,25 +160,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisSpacing: 10,
                           crossAxisCount: 2,
                           builder: (BuildContext context, int index) {
-                            return ItemCard(context: context);
+                            return ItemCard(
+                                context: context, product: product[index]);
                           },
-                          itemCount: 10,
+                          itemCount: product.length,
                         )
                       ],
                     ),
                   ),
                 );
+              } else {
+                return Center(
+                  child: Text("Error"),
+                );
               }
-            } else {
-              Future.microtask(() => Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (builder) => SignInScreen()),
-                  (dynamic Route) => false));
-            }
-            return Container();
-          },
-        ),
-      ),
+            },
+          )),
     );
   }
 
@@ -204,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget ItemCard({required BuildContext context}) {
+  Widget ItemCard({required BuildContext context, required Product product}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
@@ -221,8 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                        image:
-                            AssetImage("assets/images/AIR+FORCE+1+'07 (1).png"),
+                        image: NetworkImage(product.imageProduct),
                         fit: BoxFit.fill),
                   ),
                 ),
@@ -247,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     child: Text(
-                      "Nike",
+                      product.idBrandNavigation.nameBrand,
                       style: GoogleFonts.montserrat(
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
@@ -264,12 +268,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: Text(
-                  "Nike Air Force 1 Super Long Name",
+                  product.nameProduct,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.manrope(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Theme.of(context).colorScheme.primary),
                 ),
               ),
@@ -292,25 +296,37 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Text(
-            "1.200.000đ",
-            style: GoogleFonts.manrope(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
+          (product.newPrice != null)
+              ? Text(
+                  StringFormat.ConvertMoneyToString(product.newPrice!),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                )
+              : Text(
+                  StringFormat.ConvertMoneyToString(product.priceProduct),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
           SizedBox(
             width: 10,
           ),
-          Text(
-            "2.000.000đ",
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
-              decoration: TextDecoration.lineThrough,
-            ),
-          )
+          (product.newPrice != null && product.newPrice != product.priceProduct)
+              ? Text(
+                  "2.000.000đ",
+                  style: GoogleFonts.manrope(
+                    fontSize: 12,
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                )
+              : Container()
         ],
       ),
     );

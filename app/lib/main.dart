@@ -1,6 +1,5 @@
 // ignore_for_file: unused_import
 import 'dart:io';
-
 import 'package:ecommerce_shop/firebase_options.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
@@ -57,8 +56,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
       return MaterialApp(
-        home: LoginCheckScreen(),
-        theme: lightMode  ,
+        home: NavigationScreen(),
+        theme: lightMode,
       );
     });
   }

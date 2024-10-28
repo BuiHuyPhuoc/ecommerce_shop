@@ -247,7 +247,7 @@ namespace ShopoesAPI.Controllers
             var dbAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.Email == emailClaim);
             if (dbAccount == null)
             {
-                return NotFound("User not found");
+                return BadRequest("User not found");
             }
 
             // Kiểm tra mật khẩu hiện tại
@@ -259,7 +259,7 @@ namespace ShopoesAPI.Controllers
 
             if (!ValidatePassword(request.NewPassword))
             {
-                return Conflict("Wrong format password");
+                return BadRequest("Wrong format password");
             }
             else
             {
@@ -330,26 +330,6 @@ namespace ShopoesAPI.Controllers
                 //var newRefreshToken = GenerateRefreshToken();
                 return Ok(new { Token = newJwtToken});
             }
-            //var dbAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.RefreshToken.Token == refreshToken);
-            //if (dbAccount == null) return Unauthorized("Invalid Refresh Token");
-
-            //if (!(dbAccount.RefreshToken.Revoked == null)) return Unauthorized("Expired or revoked refresh token");
-
-            //var dbCustomer = await _context.Customers.FindAsync(dbAccount.IdCustomer);
-
-            ////var newJwtToken = CreateToken(dbCustomer!, dbAccount.Email);
-
-            ////var newRefreshToken = GenerateRefreshToken();
-
-            //dbAccount.RefreshToken = newRefreshToken;
-
-            //_context.RefreshTokens.Update(dbAccount.RefreshToken);
-            //_context.Accounts.Update(dbAccount);
-
-            //await _context.SaveChangesAsync();
-
-            //// Trả về JWT token mới và refresh token mới
-            //return Ok(new { Token = newJwtToken, RefreshToken = newRefreshToken.Token });
         }
 
         [HttpPost("DeleteCustomer")]
@@ -397,7 +377,7 @@ namespace ShopoesAPI.Controllers
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:Expires"])),
+                expires: DateTime.Now.AddSeconds(Convert.ToDouble(_configuration["Jwt:Expires"])),
                 signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;

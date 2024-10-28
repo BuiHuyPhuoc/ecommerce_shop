@@ -1,11 +1,11 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:ecommerce_shop/screens/navigation_screen.dart';
 import 'package:ecommerce_shop/screens/signup_screen.dart';
 import 'package:ecommerce_shop/widgets/custom_text_field.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:ecommerce_shop/services/auth_services.dart';
-import 'package:ecommerce_shop/widgets/login_check_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -195,7 +195,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ).ShowToast();
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (builder) => LoginCheckScreen()),
+            MaterialPageRoute(builder: (builder) => NavigationScreen()),
             (Route<dynamic> route) => false);
       } else {
         WarningToast(

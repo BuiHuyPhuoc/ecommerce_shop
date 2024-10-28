@@ -31,6 +31,10 @@ public partial class ShopoesDbContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
+    public virtual DbSet<ProductImage> ProductImages { get; set; }
+
+    public virtual DbSet<ProductVarient> ProductVarients { get; set; }
+
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
@@ -133,7 +137,7 @@ public partial class ShopoesDbContext : DbContext
             entity.HasOne(d => d.IdProductNavigation).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.IdProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__OrderDeta__IdPro__45F365D3");
+                .HasConstraintName("FK__OrderDeta__IdPro__440B1D61");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -147,6 +151,8 @@ public partial class ShopoesDbContext : DbContext
             entity.Property(e => e.ImageProduct).HasMaxLength(255);
             entity.Property(e => e.IsValid).HasDefaultValue(true);
             entity.Property(e => e.NameProduct).HasMaxLength(255);
+            entity.Property(e => e.NewPrice).HasColumnType("money");
+            entity.Property(e => e.PriceProduct).HasColumnType("money");
 
             entity.HasOne(d => d.IdBrandNavigation).WithMany(p => p.Products)
                 .HasForeignKey(d => d.IdBrand)
@@ -157,6 +163,26 @@ public partial class ShopoesDbContext : DbContext
                 .HasForeignKey(d => d.IdCategory)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Products__IdCate__403A8C7D");
+        });
+
+        modelBuilder.Entity<ProductImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductI__3214EC073159DAF9");
+
+            entity.HasOne(d => d.IdProductNavigation).WithMany(p => p.ProductImages)
+                .HasForeignKey(d => d.IdProduct)
+                .HasConstraintName("FK__ProductIm__IdPro__4CA06362");
+        });
+
+        modelBuilder.Entity<ProductVarient>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductV__3214EC07D12EAD3F");
+
+            entity.Property(e => e.IsValid).HasDefaultValue(true);
+
+            entity.HasOne(d => d.IdProductNavigation).WithMany(p => p.ProductVarients)
+                .HasForeignKey(d => d.IdProduct)
+                .HasConstraintName("FK__ProductVa__IdPro__46E78A0C");
         });
 
         modelBuilder.Entity<RefreshToken>(entity =>

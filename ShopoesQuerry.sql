@@ -11,15 +11,6 @@ go
 use ShopoesDB
 go
 
-CREATE TABLE [dbo].[__EFMigrationsHistory](
-	[MigrationId] [nvarchar](150) NOT NULL,
-	[ProductVersion] [nvarchar](32) NOT NULL,
- CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
-(
-	[MigrationId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dbo].[Account]    Script Date: 10/19/2024 11:23:09 AM ******/
 SET ANSI_NULLS ON
 GO
@@ -150,8 +141,8 @@ CREATE TABLE [dbo].[Products](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[NameProduct] [nvarchar](255) NOT NULL,
 	[Description] [nvarchar](max) NOT NULL,
-	[PriceProduct] [float] NOT NULL,
-	[NewPrice] [float] NULL,
+	[PriceProduct] [money] NOT NULL,
+	[NewPrice] [money] NULL,
 	[IdCategory] [int] NOT NULL,
 	[IdBrand] [int] NOT NULL,
 	[ImageProduct] [nvarchar](255) NULL,
@@ -312,6 +303,19 @@ GO
 ALTER TABLE OrderDetails
 ADD FOREIGN KEY (IdProduct) REFERENCES Products(Id);
 
+create table [ProductVarients] (
+	[Id] [int] IDENTITY(1,1) primary key,
+	[IdProduct] int references [Products](Id),
+	[Size] int not null check ([Size] > 0),
+	[InStock] int not null check ([InStock] >=0),
+	[IsValid] bit default 1,
+)
+
+create table [ProductImages] (
+	[Id] [int] IDENTITY(1,1) primary key,
+	[IdProduct] int references [Products](Id),
+	[ImageUrl] nvarchar(max),
+)
 
 --Thêm dữ liệu
 insert into [Brands] values (N'Nike')
@@ -323,17 +327,10 @@ insert into [Categories] values (N'Giầy thể thao')
 insert into [Categories] values (N'Giầy nam')
 insert into [Categories] values (N'Giầy nữ')
 
---[Id] [int] IDENTITY(1,1) NOT NULL,
---	[NameProduct] [nvarchar](255) NOT NULL,
---	[Description] [nvarchar](max) NOT NULL,
---	[PriceProduct] [float] NOT NULL,
---	[NewPrice] [float] NULL,
---	[IdCategory] [int] NOT NULL,
---	[IdBrand] [int] NOT NULL,
---	[ImageProduct] [nvarchar](255) NULL,
---	[IsValid] [bit] NOT NULL,
+insert into [Roles] values (N'Khách hàng')
+insert into [Roles] values (N'Quản trị viên')
 
-insert into [Products] values (N'Nike Air Force 1 Trắng', N'Giầy Nike chính hãng nhập khẩu', 2000000, 1200000, 2,  1, null, 1)
+insert into [Products] values (N'Nike Air Force 1 Trắng', N'Giầy Nike chính hãng nhập khẩu', 2000000.0, 1200000, 2,  1, null, 1)
 insert into [Products] values (N'Nike Air Force 1 Trắng Đen', N'Giầy Nike chính hãng nhập khẩu', 2000000, 1200000, 2,  1, null, 1)
 insert into [Products] values (N'Giầy chạy bộ Kriprun', N'Giầy Decathlon chính hãng nhập khẩu', 2000000, 1200000, 1,  4, null, 1)
 insert into [Products] values (N'Giầy chạy bộ Jogflow', N'Giầy Decathlon chính hãng nhập khẩu', 2000000, 1200000, 1,  4, null, 1)
@@ -348,22 +345,55 @@ insert into [Products] values (N'Nike AF1 NEXT NATURE', N'Giầy Nike chính hã
 insert into [Products] values (N'Nike Air Force 1 NN', N'Giầy Nike chính hãng nhập khẩu', 2000000, 1200000, 2, 1, null, 1)
 insert into [Products] values (N'Nike Cortez', N'Giầy Nike chính hãng nhập khẩu', 2000000, 1200000, 3, 1, null, 1)
 
-insert into [Roles] values (N'Khách hàng')
-insert into [Roles] values (N'Quản trị viên')
+insert into [ProductImages] values (1, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(2).jfif?alt=media&token=7c4fcbc1-cbee-42b1-b0ca-7adcb2358387')
+insert into [ProductImages] values (1, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(3).jfif?alt=media&token=7eef7647-2b0e-4e96-897c-74b69801b1cc')
+insert into [ProductImages] values (1, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(1).jfif?alt=media&token=4645b8c0-9328-483c-a534-888414a2b905')
+insert into [ProductImages] values (2, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(4).jfif?alt=media&token=85af822d-271f-43c8-baeb-333ec122c90c')
+insert into [ProductImages] values (2, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(5).jfif?alt=media&token=0774f5b0-bd8a-4676-8190-f98b33427774')
+insert into [ProductImages] values (2, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(6).jfif?alt=media&token=82efd6ca-695b-45ae-9af7-ec3a4aee4950')
+insert into [ProductImages] values (3, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-ch%E1%BA%A1y-b%E1%BB%99-nam-ks500-2-%C4%91en-va%CC%80ng-kiprun-8772865%20(1).jpg?alt=media&token=76945cb6-2b2b-429c-a2a3-3020637a390e')
+insert into [ProductImages] values (4, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-ch%E1%BA%A1y-b%E1%BB%99-nam-ks500-2-%C4%91en-va%CC%80ng-kiprun-8772865%20(2).jpg?alt=media&token=cd0beb24-11dc-409f-87f8-602770db3856')
+insert into [ProductImages] values (5, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-ch%E1%BA%A1y-b%E1%BB%99-nam-nh%E1%BA%B9-jogflow-500k-1-%C4%91en-kalenji-8767749%20(2).jpg?alt=media&token=79b291fe-321b-44ea-9566-6dac5c0e0ed6')
+insert into [ProductImages] values (6, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-%C4%91i-b%E1%BB%99-nam-si%C3%AAu-nh%E1%BA%B9-pw-100-x%C3%A1m-decathlon-8486177%20(2).jpg?alt=media&token=14011567-de30-494c-b8f5-b42b0366320c')
+insert into [ProductImages] values (7, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_AIR%2BFORCE%2B1%2B''07%20(1).png?alt=media&token=ac9516ab-42b2-4c1d-ad04-e246d7496910')
+insert into [ProductImages] values (8, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_NMD_G1_Shoes_White_IF3455_01_standard.png?alt=media&token=ec6dbe7d-0c5a-4460-a749-9a89d2552222')
+insert into [ProductImages] values (9, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_03_standard.png?alt=media&token=bcd913be-b87e-450a-a5d6-b5d26277e38b')
+insert into [ProductImages] values (10, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_03_standard.png?alt=media&token=bcd913be-b87e-450a-a5d6-b5d26277e38b')
+insert into [ProductImages] values (11, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_03_standard.png?alt=media&token=bcd913be-b87e-450a-a5d6-b5d26277e38b')
+insert into [ProductImages] values (12, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_03_standard.png?alt=media&token=bcd913be-b87e-450a-a5d6-b5d26277e38b')
+insert into [ProductImages] values (13, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_03_standard.png?alt=media&token=bcd913be-b87e-450a-a5d6-b5d26277e38b')
+insert into [ProductImages] values (14, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/NIKE%2BCORTEZ%20(1).png?alt=media&token=b32742bc-c49a-4a56-904f-8cb47a585abe')
+insert into [ProductImages] values (14, 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/NIKE%2BCORTEZ%20(2).png?alt=media&token=f756566e-f104-4f8c-9aec-f49c522b7697')
 
---insert into [Customers] values (N'test', '0123456789', 1)
---insert into [Customers] values (N'admin', '0987654321', 2)
+update Products
+set ImageProduct = 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/AIR%2BFORCE%2B1%2B''07%20(1).jfif?alt=media&token=4645b8c0-9328-483c-a534-888414a2b905'
+where Id = 1 or Id = 2 or Id = 7 or Id = 12 or Id = 13 or Id = 14
 
---insert into [Addresses] values (1, N'Thành phố Hồ Chí Minh', N'Huyện Hóc Môn', N'Xã Trung Chánh', N'119 đường Giác Đạo', 1)
---insert into [Addresses] values (1, N'Thành phố Hồ Chí Minh', N'Huyện Hóc Môn', N'Xã Trung Chánh', N'333 đường Giác Đạo', 1)
+update Products
+set ImageProduct = 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-ch%E1%BA%A1y-b%E1%BB%99-nam-ks500-2-%C4%91en-va%CC%80ng-kiprun-8772865.jpg?alt=media&token=3f677fd6-63ae-4198-9ca0-04bb22e4fc84'
+where Id = 3 or Id = 4 or Id = 5 or Id = 6
 
---insert into [Account] values ('test@gmail.com', '123', 1)
---insert into [Account] values ('admin@gmail.com', '123', 2) 
+update Products
+set ImageProduct = 'https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/imageye___-_Adifom_Climacool_Shoes_Grey_IF3935_01_standard.png?alt=media&token=373bb199-a34f-4aa6-8473-0c78639e6f43'
+where Id = 8 or Id = 9 or Id = 10 or Id = 11
 
---select * from Account
---select * from Customers
-
---delete from Customers;
---delete from Account;
- 
+insert into ProductVarients values (1, 34, 5, 1)
+insert into ProductVarients values (1, 35, 5, 1)
+insert into ProductVarients values (1, 36, 5, 1)
+insert into ProductVarients values (1, 37, 5, 1)
+insert into ProductVarients values (2, 34, 5, 1)
+insert into ProductVarients values (2, 35, 5, 1)
+insert into ProductVarients values (3, 34, 5, 1)
+insert into ProductVarients values (3, 35, 5, 1)
+insert into ProductVarients values (4, 34, 5, 1)
+insert into ProductVarients values (5, 34, 5, 1)
+insert into ProductVarients values (6, 34, 5, 1)
+insert into ProductVarients values (7, 34, 5, 1)
+insert into ProductVarients values (8, 34, 5, 1)
+insert into ProductVarients values (9, 34, 5, 1)
+insert into ProductVarients values (10, 34, 5, 1)
+insert into ProductVarients values (11, 34, 5, 1)
+insert into ProductVarients values (12, 34, 5, 1)
+insert into ProductVarients values (13, 34, 5, 1)
+insert into ProductVarients values (14, 34, 5, 1)
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace ShopoesAPI.Models;
 
@@ -18,6 +19,6 @@ public partial class Address
     public string Street { get; set; } = null!;
 
     public bool IsDefault { get; set; }
-
+    [JsonIgnore]
     public virtual Customer IdCustomerNavigation { get; set; } = null!;
 }
