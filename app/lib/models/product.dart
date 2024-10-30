@@ -48,12 +48,15 @@ class Product {
       newPrice: map['newPrice'] as double,
       imageProduct: map['imageProduct'] as String,
       isValid: map['isValid'] as bool,
-      idBrandNavigation: Brand.fromMap(map['idBrandNavigation'] as Map<String,dynamic>),
-      idCategoryNavigation: Category.fromMap(map['idCategoryNavigation'] as Map<String,dynamic>),
+      idBrandNavigation:
+          Brand.fromMap(map['idBrandNavigation'] as Map<String, dynamic>),
+      idCategoryNavigation:
+          Category.fromMap(map['idCategoryNavigation'] as Map<String, dynamic>),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Product.fromJson(String source) => Product.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Product.fromJson(String source) =>
+      Product.fromMap(json.decode(source) as Map<String, dynamic>);
 }
