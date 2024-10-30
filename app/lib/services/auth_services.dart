@@ -126,18 +126,7 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
     throw Exception("Sign in time out");
   }
   Dio _dio = Dio();
-  // var _data = {
-  //   'currentPassword': request.currentPassword,
-  //   'newPassword': request.newPassword,
-  //   'confirmPassword': request.confirmPassword
-  // };
-  // var _options = Options(
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': 'Bearer $token',
-  //   },
-  // );
-  //print("Dữ liệu gửi lên: ${jsonEncode(_data)}");
+  
   try {
     final response = await _dio.post(
       url,
@@ -161,12 +150,6 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
       if (checkGetNewToken) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         token = preferences.getString("token");
-        // _options = Options(
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': 'Bearer $token',
-        //   },
-        // );
         final response = await _dio.post(
           url,
           data: {
