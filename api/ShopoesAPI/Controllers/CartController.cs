@@ -18,7 +18,7 @@ namespace ShopoesAPI.Controllers
         {
             _context = context;
         }
-
+        
         [HttpGet]
         [Route("GetCart")]
         [Authorize]

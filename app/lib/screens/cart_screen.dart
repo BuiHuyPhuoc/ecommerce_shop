@@ -1,8 +1,7 @@
 import 'package:ecommerce_shop/class/string_format.dart';
-import 'package:ecommerce_shop/models/brand.dart';
-import 'package:ecommerce_shop/models/category.dart';
+import 'package:ecommerce_shop/models/cart.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
-import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/services/cart_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,10 +15,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late List<ProductVarient> _product;
   late List<bool> _indexSelectedProduct;
   int _countSelected = 0;
-
+  late List<Cart> listCarts;
+  bool isLoading = true;
   @override
   void setState(fn) {
     if (mounted) {
@@ -37,7 +36,7 @@ class _CartScreenState extends State<CartScreen> {
   void SelectAll() {
     setState(() {
       _indexSelectedProduct =
-          List<bool>.generate(_product.length, (index) => true);
+          List<bool>.generate(listCarts.length, (index) => true);
       _countSelected =
           _indexSelectedProduct.where((element) => element == true).length;
     });
@@ -46,60 +45,37 @@ class _CartScreenState extends State<CartScreen> {
   void RemoveAll() {
     setState(() {
       _indexSelectedProduct =
-          List<bool>.generate(_product.length, (index) => false);
+          List<bool>.generate(listCarts.length, (index) => false);
       _countSelected =
           _indexSelectedProduct.where((element) => element == true).length;
     });
   }
 
+  void GetData() async {
+    listCarts = await GetCarts();
+    _indexSelectedProduct =
+        List<bool>.generate(listCarts.length, (index) => false);
+    CountSelected();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   void initState() {
-    _product = [
-      new ProductVarient(
-        id: 0,
-        idProduct: 0,
-        size: 36,
-        isValid: true,
-        idProductNavigation: Product(
-          id: 0,
-          nameProduct: "High broke of shoes",
-          description: "Super ultra high broke of shoes",
-          priceProduct: 1200000,
-          newPrice: 1,
-          imageProduct:
-              "https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-%C4%91i-b%E1%BB%99-nam-si%C3%AAu-nh%E1%BA%B9-pw-100-x%C3%A1m-decathlon-8486177.jpg?alt=media&token=5750c656-ac14-406e-acde-e9aa88ef2de9",
-          isValid: true,
-          idBrandNavigation: Brand(id: 0, nameBrand: "Broke"),
-          idCategoryNavigation: Category(id: 0, name: "Broke shoe"),
-        ),
-      ),
-      new ProductVarient(
-        id: 0,
-        idProduct: 0,
-        size: 36,
-        isValid: true,
-        idProductNavigation: Product(
-          id: 0,
-          nameProduct: "High broke of shoes",
-          description: "Super ultra high broke of shoes",
-          priceProduct: 1200000,
-          newPrice: null,
-          imageProduct:
-              "https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-%C4%91i-b%E1%BB%99-nam-si%C3%AAu-nh%E1%BA%B9-pw-100-x%C3%A1m-decathlon-8486177.jpg?alt=media&token=5750c656-ac14-406e-acde-e9aa88ef2de9",
-          isValid: true,
-          idBrandNavigation: Brand(id: 0, nameBrand: "Broke"),
-          idCategoryNavigation: Category(id: 0, name: "Broke shoe"),
-        ),
-      )
-    ];
-    _indexSelectedProduct =
-        List<bool>.generate(_product.length, (index) => false);
-    CountSelected();
+    GetData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: CustomAppBar(context: context, title: "Cart List"),
@@ -111,13 +87,11 @@ class _CartScreenState extends State<CartScreen> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
-            itemCount: _product.length,
+            itemCount: listCarts.length,
             itemBuilder: (context, index) {
-              return CartItem(index, _product[index]);
+              return ItemCart(index, listCarts[index]);
             },
-            separatorBuilder: (context, index) => SizedBox(
-              height: 10,
-            ),
+            separatorBuilder: (context, index) => SizedBox(height: 10),
           ),
         ),
       ),
@@ -136,9 +110,11 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             GestureDetector(
               onTap: () => setState(() {
-                (_countSelected != _product.length) ? SelectAll() : RemoveAll();
+                (_countSelected != listCarts.length)
+                    ? SelectAll()
+                    : RemoveAll();
               }),
-              child: (_countSelected == _product.length)
+              child: (_countSelected == listCarts.length)
                   ? Icon(
                       Icons.check_box,
                       size: 24,
@@ -149,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
             Expanded(
               flex: 1,
               child: Text(
-                "Tất cả",
+                "Get all",
                 style: GoogleFonts.manrope(
                     fontWeight: FontWeight.bold,
                     color:
@@ -164,14 +140,14 @@ class _CartScreenState extends State<CartScreen> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 text: TextSpan(
-                  text: 'Tổng thanh toán: ',
+                  text: 'Total: ',
                   style: GoogleFonts.manrope(
                     fontSize: 14,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '10.000.000đ',
+                      text: StringFormat.ConvertMoneyToString(GetTotalPrice()),
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -188,7 +164,7 @@ class _CartScreenState extends State<CartScreen> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Text(
-                "Mua (${_countSelected.toString()})",
+                "Buy (${_countSelected.toString()})",
                 style: GoogleFonts.manrope(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.onPrimary),
@@ -200,10 +176,27 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget CartItem(int position, ProductVarient product) {
+  double GetTotalPrice() {
+    double sumTotal = 0;
+    for (var i = 0; i < _indexSelectedProduct.length; i++) {
+      if (_indexSelectedProduct[i]) {
+        sumTotal += listCarts[i]
+                .idProductVarientNavigation
+                .idProductNavigation!
+                .newPrice ??
+            listCarts[i]
+                .idProductVarientNavigation
+                .idProductNavigation!
+                .priceProduct;
+      }
+    }
+    return sumTotal;
+  }
+
+  Widget ItemCart(int position, Cart cart) {
     return Container(
       width: double.infinity,
-      height: 120,
+      height: 140,
       padding: EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -224,7 +217,8 @@ class _CartScreenState extends State<CartScreen> {
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage("assets/images/AIR+FORCE+1+'07 (1).png"),
+                  image: NetworkImage(cart.idProductVarientNavigation
+                      .idProductNavigation!.imageProduct),
                 ),
               ),
             ),
@@ -239,11 +233,12 @@ class _CartScreenState extends State<CartScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        product.idProductNavigation!.nameProduct,
+                        cart.idProductVarientNavigation.idProductNavigation!
+                            .nameProduct,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.manrope(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -268,11 +263,20 @@ class _CartScreenState extends State<CartScreen> {
                     )
                   ],
                 ),
+                Text(
+                  cart.idProductVarientNavigation.idProductNavigation!
+                      .idBrandNavigation.nameBrand,
+                  style: GoogleFonts.manrope(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
                 Expanded(
                   child: Text(
-                    product.idProductNavigation!.idBrandNavigation.nameBrand,
+                    "Size: " + cart.idProductVarientNavigation.size.toString(),
                     style: GoogleFonts.manrope(
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -286,18 +290,25 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            StringFormat.ConvertMoneyToString(
-                                product.idProductNavigation!.newPrice ??
-                                    product.idProductNavigation!.priceProduct),
+                            StringFormat.ConvertMoneyToString(cart
+                                    .idProductVarientNavigation
+                                    .idProductNavigation!
+                                    .newPrice ??
+                                cart.idProductVarientNavigation
+                                    .idProductNavigation!.priceProduct),
                             style: GoogleFonts.manrope(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
                             ),
                           ),
-                          (product.idProductNavigation!.newPrice != null)
+                          (cart.idProductVarientNavigation.idProductNavigation!
+                                      .newPrice !=
+                                  null)
                               ? Text(
-                                  StringFormat.ConvertMoneyToString(product
-                                      .idProductNavigation!.priceProduct),
+                                  StringFormat.ConvertMoneyToString(cart
+                                      .idProductVarientNavigation
+                                      .idProductNavigation!
+                                      .priceProduct),
                                   style: GoogleFonts.manrope(
                                       color: Theme.of(context)
                                           .colorScheme
