@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:ecommerce_shop/models/product.dart';
-import 'package:ecommerce_shop/models/product_detail.dart';
 
 Future<List<Product>> GetProduct() async {
   List<Product> result = [];

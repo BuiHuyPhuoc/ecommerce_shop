@@ -1,3 +1,6 @@
+import 'package:ecommerce_shop/class/string_format.dart';
+import 'package:ecommerce_shop/models/brand.dart';
+import 'package:ecommerce_shop/models/category.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
 import 'package:ecommerce_shop/models/product.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
@@ -13,13 +16,13 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  late List<Product> _product;
+  late List<ProductVarient> _product;
   late List<bool> _indexSelectedProduct;
   int _countSelected = 0;
 
-    @override
+  @override
   void setState(fn) {
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -51,7 +54,44 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
-    _product = [];
+    _product = [
+      new ProductVarient(
+        id: 0,
+        idProduct: 0,
+        size: 36,
+        isValid: true,
+        idProductNavigation: Product(
+          id: 0,
+          nameProduct: "High broke of shoes",
+          description: "Super ultra high broke of shoes",
+          priceProduct: 1200000,
+          newPrice: 1,
+          imageProduct:
+              "https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-%C4%91i-b%E1%BB%99-nam-si%C3%AAu-nh%E1%BA%B9-pw-100-x%C3%A1m-decathlon-8486177.jpg?alt=media&token=5750c656-ac14-406e-acde-e9aa88ef2de9",
+          isValid: true,
+          idBrandNavigation: Brand(id: 0, nameBrand: "Broke"),
+          idCategoryNavigation: Category(id: 0, name: "Broke shoe"),
+        ),
+      ),
+      new ProductVarient(
+        id: 0,
+        idProduct: 0,
+        size: 36,
+        isValid: true,
+        idProductNavigation: Product(
+          id: 0,
+          nameProduct: "High broke of shoes",
+          description: "Super ultra high broke of shoes",
+          priceProduct: 1200000,
+          newPrice: null,
+          imageProduct:
+              "https://firebasestorage.googleapis.com/v0/b/shopoes-2e0b8.appspot.com/o/gi%C3%A0y-%C4%91i-b%E1%BB%99-nam-si%C3%AAu-nh%E1%BA%B9-pw-100-x%C3%A1m-decathlon-8486177.jpg?alt=media&token=5750c656-ac14-406e-acde-e9aa88ef2de9",
+          isValid: true,
+          idBrandNavigation: Brand(id: 0, nameBrand: "Broke"),
+          idCategoryNavigation: Category(id: 0, name: "Broke shoe"),
+        ),
+      )
+    ];
     _indexSelectedProduct =
         List<bool>.generate(_product.length, (index) => false);
     CountSelected();
@@ -66,7 +106,7 @@ class _CartScreenState extends State<CartScreen> {
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: ListView.separated(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -160,7 +200,7 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget CartItem(int position, Product product) {
+  Widget CartItem(int position, ProductVarient product) {
     return Container(
       width: double.infinity,
       height: 120,
@@ -199,7 +239,7 @@ class _CartScreenState extends State<CartScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        product.nameProduct,
+                        product.idProductNavigation!.nameProduct,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.manrope(
@@ -230,23 +270,44 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 Expanded(
                   child: Text(
-                    product.idBrandNavigation.nameBrand,
+                    product.idProductNavigation!.idBrandNavigation.nameBrand,
                     style: GoogleFonts.manrope(
                       fontSize: 16,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Expanded(
-                      child: Text(
-                        product.newPrice.toString(),
-                        style: GoogleFonts.manrope(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            StringFormat.ConvertMoneyToString(
+                                product.idProductNavigation!.newPrice ??
+                                    product.idProductNavigation!.priceProduct),
+                            style: GoogleFonts.manrope(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          (product.idProductNavigation!.newPrice != null)
+                              ? Text(
+                                  StringFormat.ConvertMoneyToString(product
+                                      .idProductNavigation!.priceProduct),
+                                  style: GoogleFonts.manrope(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.4),
+                                      decoration: TextDecoration.lineThrough,
+                                      fontSize: 14),
+                                )
+                              : Container(),
+                        ],
                       ),
                     ),
                     Container(
@@ -259,6 +320,7 @@ class _CartScreenState extends State<CartScreen> {
                           Icon(
                             Icons.remove,
                             color: Colors.black,
+                            size: 20,
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 6),
@@ -270,6 +332,7 @@ class _CartScreenState extends State<CartScreen> {
                           Icon(
                             Icons.add,
                             color: Colors.black,
+                            size: 20,
                           ),
                         ],
                       ),
