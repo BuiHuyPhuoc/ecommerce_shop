@@ -14,7 +14,7 @@ public partial class ShopoesDbContext : DbContext
         : base(options)
     {
     }
-
+    public virtual DbSet<Cart> Carts { get; set; }
     public virtual DbSet<Account> Accounts { get; set; }
 
     public virtual DbSet<Address> Addresses { get; set; }
@@ -212,6 +212,21 @@ public partial class ShopoesDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC0772513104");
 
             entity.Property(e => e.NameRole).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.IdCustomerNavigation)
+                  .WithMany(c => c.Carts)
+                  .HasForeignKey(e => e.IdCustomer)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.IdProductVarientNavigation)
+                  .WithMany(p => p.Carts)
+                  .HasForeignKey(e => e.IdProductVarient)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);
