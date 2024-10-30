@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
       return MaterialApp(
-        home: ProductDetailScreen(idProduct: 1),
+        home: NavigationScreen(pageNumber: 2,),
         theme: lightMode,
       );
     });

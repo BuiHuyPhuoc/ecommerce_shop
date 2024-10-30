@@ -10,7 +10,7 @@ PreferredSizeWidget CustomAppBar(
     List<Widget>? actions,
     bool centerTitle = true}) {
   return AppBar(
-    leadingWidth: 30,
+    //leadingWidth: 30,
     centerTitle: centerTitle,
     backgroundColor: Theme.of(context).colorScheme.background,
     scrolledUnderElevation: 0,

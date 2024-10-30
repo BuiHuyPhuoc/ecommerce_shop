@@ -3,6 +3,7 @@ import 'package:ecommerce_shop/models/product_detail.dart';
 import 'package:ecommerce_shop/services/product_services.dart';
 import 'package:ecommerce_shop/widgets/cart_button.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
+import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,6 +17,9 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Future<ProductDetail>? product;
+  int? selectedVarient;
+
+  int quantity = 1;
   void GetData() async {
     product = GetProductDetail(widget.idProduct);
   }
@@ -50,7 +54,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
                     leading: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       icon: Icon(Icons.arrow_back),
                     ),
                     context: context,
@@ -128,6 +134,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     fontSize: 18,
                                     color: Colors.black),
                               ),
+                              SizedBox(height: 10),
                               Container(
                                 height: 48,
                                 child: ListView.separated(
@@ -136,23 +143,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   itemBuilder: (context, index) {
                                     return AspectRatio(
                                       aspectRatio: 1 / 1,
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            shape: BoxShape.circle),
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            getProduct
-                                                .productVarients[index].size
-                                                .toString(),
-                                            style: GoogleFonts.manrope(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (selectedVarient == index) {
+                                            setState(() {
+                                              selectedVarient = null;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              selectedVarient = index;
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                              color: (selectedVarient == index)
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                      .withOpacity(0.4),
+                                              shape: BoxShape.circle),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              getProduct
+                                                  .productVarients[index].size
+                                                  .toString(),
+                                              style: GoogleFonts.manrope(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -191,13 +216,41 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
-                                StringFormat.ConvertMoneyToString(
-                                  getProduct.newPrice ??
-                                      getProduct.priceProduct,
-                                ),
-                                style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    StringFormat.ConvertMoneyToString(
+                                      (getProduct.newPrice ??
+                                              getProduct.priceProduct) *
+                                          quantity,
+                                    ),
+                                    style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  (getProduct.newPrice != null)
+                                      ? Text(
+                                          StringFormat.ConvertMoneyToString(
+                                            getProduct.priceProduct * quantity,
+                                          ),
+                                          style: GoogleFonts.manrope(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.6),
+                                          ),
+                                        )
+                                      : Container()
+                                ],
                               ),
                             ),
                             Container(
@@ -210,32 +263,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 children: [
                                   Container(
                                     child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          quantity--;
+                                        });
+                                      },
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 6, vertical: 0),
                                       icon: Icon(
                                         Icons.remove,
                                         color: Colors.black,
                                       ),
-                                      onPressed: () {},
                                     ),
                                   ),
                                   Container(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 6),
                                     child: Text(
-                                      "1",
+                                      quantity.toString(),
                                       style: GoogleFonts.roboto(fontSize: 16),
                                     ),
                                   ),
                                   Container(
                                     child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          quantity++;
+                                        });
+                                      },
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 6, vertical: 0),
                                       icon: Icon(
                                         Icons.add,
                                         color: Colors.black,
                                       ),
-                                      onPressed: () {},
                                     ),
                                   ),
                                 ],
@@ -244,19 +305,30 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ],
                         ),
                         SizedBox(height: 10),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Theme.of(context).colorScheme.primary),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Add to cart",
-                              style: GoogleFonts.manrope(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
+                        GestureDetector(
+                          onTap: () {
+                            if (selectedVarient == null) {
+                              NotifyToast(
+                                context: context,
+                                message: "Please pick up the size",
+                              ).ShowToast();
+                              return;
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Theme.of(context).colorScheme.primary),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Add to cart",
+                                style: GoogleFonts.manrope(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
+                              ),
                             ),
                           ),
                         )
