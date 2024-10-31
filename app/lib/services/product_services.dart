@@ -59,6 +59,6 @@ Future<ProductDetail> GetProductDetail(int id) async {
     return result;
   } on DioError catch (e) {
     print(e.message);
-    throw Exception("Eror when get product.");
+    throw Exception("Error when get product.");
   }
 }

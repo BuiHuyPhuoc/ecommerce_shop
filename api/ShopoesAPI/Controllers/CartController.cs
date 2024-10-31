@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -107,8 +109,25 @@ namespace ShopoesAPI.Controllers
                         return BadRequest(ex.Message);
                     }
                 }
-                
             }
+        }
+
+        [HttpDelete]
+        [Route("DeleteCart")]
+        [Authorize]
+        public async Task<IActionResult> DeleteCart([FromBody] List<int> idCarts)
+        {
+            foreach(var idCart in idCarts)
+            {
+                var dbCart = await _context.Carts.FindAsync(idCart);
+                if (dbCart == null)
+                {
+                    continue;
+                }
+                _context.Carts.Remove(dbCart);
+                await _context.SaveChangesAsync();
+            }
+            return Ok();
         }
     }
 }

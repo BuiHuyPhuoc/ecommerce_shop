@@ -6,6 +6,7 @@ import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
@@ -196,211 +197,363 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget ItemCart(int position, Cart cart) {
-    return Container(
-      width: double.infinity,
-      height: 140,
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
-          width: 1,
-        ),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1 / 1,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(cart.idProductVarientNavigation
-                      .idProductNavigation!.imageProduct),
+    late bool isTouching = false;
+    return GestureDetector(
+      onLongPress: () {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'Delete from cart?',
+                style: GoogleFonts.manrope(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primaryFixed),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(
+                      "Do you want to remove this product from cart?",
+                      style: GoogleFonts.manrope(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.primaryFixed,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Ok'),
+                  onPressed: () async {
+                    LoadingDialog(context);
+                    bool check = await DeleteCart([cart.id]);
+                    Navigator.pop(context); // Pop loading circle
+                    if (check) {
+                      SuccessToast(
+                        context: context,
+                        message: "Delete success",
+                      ).ShowToast();
+                    } else {
+                      WarningToast(
+                        context: context,
+                        message: "Delete failed",
+                      ).ShowToast();
+                    }
+                    setState(() {
+                      GetData();
+                    });
+                    Navigator.pop(context); // Pop dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Slidable(
+        endActionPane: ActionPane(
+          extentRatio: 0.3,
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (context) {
+                showDialog<void>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Delete from cart?',
+                        style: GoogleFonts.manrope(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primaryFixed),
+                      ),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Text(
+                              "Do you want to remove this product from cart?",
+                              style: GoogleFonts.manrope(
+                                fontSize: 16,
+                                color:
+                                    Theme.of(context).colorScheme.primaryFixed,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Approve'),
+                          onPressed: () async {
+                            LoadingDialog(context);
+                            bool check = await DeleteCart([cart.id]);
+                            Navigator.pop(context); // Pop loading circle
+                            if (check) {
+                              SuccessToast(
+                                context: context,
+                                message: "Delete success",
+                              ).ShowToast();
+                            } else {
+                              WarningToast(
+                                context: context,
+                                message: "Delete failed",
+                              ).ShowToast();
+                            }
+                            setState(() {
+                              GetData();
+                            });
+                            Navigator.pop(context); // Pop dialog
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
             ),
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Column(
+          ],
+        ),
+        child: Listener(
+          onPointerDown: (event) => setState(() {
+            isTouching = true;
+          }),
+          onPointerUp: (event) => setState(() {
+            isTouching = false;
+          }),
+          child: Container(
+            width: double.infinity,
+            height: 140,
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: (isTouching)
+                  ? Theme.of(context).colorScheme.surface
+                  : Theme.of(context).colorScheme.background,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        cart.idProductVarientNavigation.idProductNavigation!
-                            .nameProduct,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.manrope(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                AspectRatio(
+                  aspectRatio: 1 / 1,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(cart.idProductVarientNavigation
+                            .idProductNavigation!.imageProduct),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _indexSelectedProduct[position] =
-                              !_indexSelectedProduct[position];
-                          CountSelected();
-                        });
-                      },
-                      child: Container(
-                        child: Icon(
-                          (_indexSelectedProduct[position])
-                              ? Icons.check_box
-                              : Icons.check_box_outlined,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 24,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                Text(
-                  cart.idProductVarientNavigation.idProductNavigation!
-                      .idBrandNavigation.nameBrand,
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
+                SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    "Size: " + cart.idProductVarientNavigation.size.toString(),
-                    style: GoogleFonts.manrope(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              cart.idProductVarientNavigation
+                                  .idProductNavigation!.nameProduct,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.manrope(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _indexSelectedProduct[position] =
+                                    !_indexSelectedProduct[position];
+                                CountSelected();
+                              });
+                            },
+                            child: Container(
+                              child: Icon(
+                                (_indexSelectedProduct[position])
+                                    ? Icons.check_box
+                                    : Icons.check_box_outlined,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 24,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(
+                        cart.idProductVarientNavigation.idProductNavigation!
+                            .idBrandNavigation.nameBrand,
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          "Size: " +
+                              cart.idProductVarientNavigation.size.toString(),
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  StringFormat.ConvertMoneyToString(cart
+                                          .idProductVarientNavigation
+                                          .idProductNavigation!
+                                          .newPrice ??
+                                      cart.idProductVarientNavigation
+                                          .idProductNavigation!.priceProduct),
+                                  style: GoogleFonts.manrope(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                (cart.idProductVarientNavigation
+                                            .idProductNavigation!.newPrice !=
+                                        null)
+                                    ? Text(
+                                        StringFormat.ConvertMoneyToString(cart
+                                            .idProductVarientNavigation
+                                            .idProductNavigation!
+                                            .priceProduct),
+                                        style: GoogleFonts.manrope(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.4),
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            fontSize: 14),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                                  Border.all(color: Colors.black26, width: 1),
+                            ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    LoadingDialog(context);
+                                    bool check = await UpdateCart(
+                                        idCart: cart.id, amount: -1);
+                                    Navigator.pop(context);
+                                    if (check) {
+                                      cart.quantity += -1;
+                                      if (cart.quantity < 0) {
+                                        cart.quantity = 0;
+                                      }
+                                      setState(() {});
+                                    } else {
+                                      WarningToast(
+                                              context: context,
+                                              message: "Update quantity failed")
+                                          .ShowToast();
+                                    }
+                                  },
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: Colors.black,
+                                    size: 22,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Text(
+                                    cart.quantity.toString(),
+                                    style: GoogleFonts.roboto(fontSize: 16),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    try {
+                                      LoadingDialog(context);
+                                      bool check = await UpdateCart(
+                                          idCart: cart.id, amount: 1);
+                                      Navigator.pop(context);
+                                      if (check) {
+                                        cart.quantity += 1;
+                                        setState(() {});
+                                      } else {
+                                        WarningToast(
+                                                context: context,
+                                                message:
+                                                    "Update quantity failed")
+                                            .ShowToast();
+                                      }
+                                    } catch (e) {
+                                      WarningToast(
+                                        context: context,
+                                        message: e.toString(),
+                                      ).ShowToast();
+                                      return;
+                                    }
+                                  },
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.black,
+                                    size: 22,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            StringFormat.ConvertMoneyToString(cart
-                                    .idProductVarientNavigation
-                                    .idProductNavigation!
-                                    .newPrice ??
-                                cart.idProductVarientNavigation
-                                    .idProductNavigation!.priceProduct),
-                            style: GoogleFonts.manrope(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          (cart.idProductVarientNavigation.idProductNavigation!
-                                      .newPrice !=
-                                  null)
-                              ? Text(
-                                  StringFormat.ConvertMoneyToString(cart
-                                      .idProductVarientNavigation
-                                      .idProductNavigation!
-                                      .priceProduct),
-                                  style: GoogleFonts.manrope(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.4),
-                                      decoration: TextDecoration.lineThrough,
-                                      fontSize: 14),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.black26, width: 1),
-                      ),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              LoadingDialog(context);
-                              bool check =
-                                  await UpdateCart(idCart: cart.id, amount: -1);
-                              Navigator.pop(context);
-                              if (check) {
-                                cart.quantity += -1;
-                                if (cart.quantity < 0) {
-                                  cart.quantity = 0;
-                                }
-                                setState(() {});
-                              } else {
-                                WarningToast(
-                                        context: context,
-                                        message: "Update quantity failed")
-                                    .ShowToast();
-                              }
-                            },
-                            child: Icon(
-                              Icons.remove,
-                              color: Colors.black,
-                              size: 22,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: Text(
-                              cart.quantity.toString(),
-                              style: GoogleFonts.roboto(fontSize: 16),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              try {
-                                LoadingDialog(context);
-                                bool check = await UpdateCart(
-                                    idCart: cart.id, amount: 1);
-                                Navigator.pop(context);
-                                if (check) {
-                                  cart.quantity += 1;
-                                  setState(() {});
-                                } else {
-                                  WarningToast(
-                                          context: context,
-                                          message: "Update quantity failed")
-                                      .ShowToast();
-                                }
-                              } catch (e) {
-                                WarningToast(
-                                  context: context,
-                                  message: e.toString(),
-                                ).ShowToast();
-                                return;
-                              }
-                            },
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.black,
-                              size: 22,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
