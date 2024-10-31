@@ -13,8 +13,13 @@ public partial class ProductVarient
     public int Size { get; set; }
 
     public int InStock { get; set; }
-
+        
     public bool? IsValid { get; set; }
-    [JsonIgnore]
+  
+    [JsonInclude]
     public virtual Product? IdProductNavigation { get; set; }
+
+    [JsonIgnore]
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
 }

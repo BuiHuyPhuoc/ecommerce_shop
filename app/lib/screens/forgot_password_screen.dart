@@ -1,8 +1,4 @@
-import 'package:ecommerce_shop/screens/send_email_screen.dart';
-import 'package:ecommerce_shop/screens/signin_screen.dart';
-import 'package:ecommerce_shop/screens/signup_screen.dart';
-import 'package:ecommerce_shop/services/auth_services.dart';
-import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -31,61 +27,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text(
-          "Shopoes",
-          style: GoogleFonts.manrope(
-            fontSize: 20,
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (builder) => SignUpScreen()),
-                  (dynamic Route) => false);
-            },
-            child: Text(
-              "Create an account",
-              style: GoogleFonts.manrope(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-        ],
-      ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IntrinsicWidth(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onPrimaryFixed,
-                    border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withOpacity(0.4),
-                      width: 1,
+              child: AspectRatio(
+                aspectRatio: 1 / 1,
+                child: Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.outline)),
+                  child: Center(
+                    child: Icon(
+                      Icons.fingerprint,
+                      size: 42,
                     ),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Center(
-                  child: Icon(
-                    Icons.fingerprint,
-                    color: Theme.of(context).colorScheme.primaryFixed,
-                    size: 50,
                   ),
                 ),
               ),
@@ -94,119 +56,67 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Text(
               "Forgot Password?",
               style: GoogleFonts.manrope(
-                  fontSize: 20, fontWeight: FontWeight.bold),
+
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primaryFixed),
             ),
-            Text("No worries, we\'ll send  you a new password"),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                label: Text("Email"),
-                hintText: "Email",
-                hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                floatingLabelStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusColor: Theme.of(context).colorScheme.onSurface,
+            SizedBox(height: 10),
+            Text(
+              "We will send new password to your email.",
+              style: GoogleFonts.manrope(
+                fontSize: 16,
+                color:
+                    Theme.of(context).colorScheme.primaryFixed,
               ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            CustomTextField(
+              controller: _emailController,
+              context: context,
+              hintText: "Email",
+              prefixIcon: Icon(Icons.email),
             ),
             SizedBox(height: 10),
             GestureDetector(
-              onTap: () async {
-                String email = _emailController.text.trim();
-                if (email.isEmpty || email == "") {
-                  WarningToast(
-                    context: context,
-                    message: "Please input email",
-                  ).ShowToast();
-                  return;
-                }
-                String? respond;
-                try {
-                  respond = await ForgotPassword(email);
-                  SuccessToast(
-                    context: context,
-                    message: respond!,
-                  ).ShowToast();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (builder) => SendEmailScreen(email: email)));
-                  return;
-                } catch (e) {
-                  WarningToast(
-                    context: context,
-                    message: e.toString(),
-                  ).ShowToast();
-                  return;
-                }
-              },
+              onTap: () => null,
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 6),
+                padding: EdgeInsets.symmetric(vertical: 12),
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).colorScheme.primaryFixed,
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 child: Center(
                   child: Text(
-                    "Reset password",
-                    style: GoogleFonts.manrope(
-                      fontSize: 18,
+                    "Get new password",
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryFixed,
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (builder) => SignInScreen()),
-                    (dynamic Route) => false);
-              },
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.arrow_back,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 24,
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(Icons.arrow_back),
+                  SizedBox(width: 10),
+                  Text(
+                    "Back to login",
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primaryFixed,
                     ),
-                    SizedBox(width: 10),
-                    Text(
-                      "Back to login",
-                      style: GoogleFonts.manrope(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               ),
             )
           ],

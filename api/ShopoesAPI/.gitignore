@@ -1,0 +1,37 @@
+# Bỏ qua thư mục build
+bin/
+obj/
+
+# Bỏ qua file cấu hình người dùng của Visual Studio
+*.user
+*.suo
+
+# Bỏ qua file khóa của Visual Studio
+.vs/
+
+# Bỏ qua file dựng của các công cụ như paket hoặc NPM trong dự án Blazor/Web
+paket-files/
+node_modules/
+wwwroot/lib/
+
+# Bỏ qua các file log và file tạm
+*.log
+*.temp
+*.tmp
+
+# Bỏ qua các thư mục và file được tạo khi thực hiện publish
+publish/
+app.publish/
+
+# Bỏ qua file thuộc tính dự án
+project.lock.json
+project.fragment.lock.json
+
+# Bỏ qua các thư mục tạm và môi trường khác
+.idea/
+.vscode/
+ReSharper*
+
+# Thư mục cấu hình hệ thống khác
+.DS_Store
+Thumbs.db

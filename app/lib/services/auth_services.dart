@@ -150,12 +150,18 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         token = preferences.getString("token");
         try {
-          final response = await _dio.post(
-            url,
-            data: {
-              'currentPassword': request.currentPassword,
-              'newPassword': request.newPassword,
-              'confirmPassword': request.confirmPassword,
+
+        final response = await _dio.post(
+          url,
+          data: {
+            'currentPassword': request.currentPassword,
+            'newPassword': request.newPassword,
+            'confirmPassword': request.confirmPassword,
+          },
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
             },
             options: Options(
               headers: {

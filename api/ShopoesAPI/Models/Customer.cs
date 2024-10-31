@@ -20,11 +20,15 @@ public partial class Customer
     public virtual Account? Account { get; set; }
     [JsonIgnore]
     public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
+
     public virtual Role IdRoleNavigation { get; set; } = null!;
-    [JsonIgnore]
 
+    [JsonIgnore]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-    [JsonIgnore]
 
+    [JsonIgnore]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    [JsonIgnore]
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 }

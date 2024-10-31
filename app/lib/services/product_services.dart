@@ -42,3 +42,23 @@ Future<List<Product>> GetSaleProduct() async {
     throw Exception("Eror when get product.");
   }
 }
+
+Future<ProductDetail> GetProductDetail(int id) async {
+  ProductDetail result;
+  Dio _dio = Dio();
+  try {
+    var res = await _dio.get(
+      "https://10.0.2.2:7277/api/Product/GetProductById?id=${id}",
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      ),
+    );
+    result = ProductDetail.fromMap(res.data);
+    return result;
+  } on DioError catch (e) {
+    print(e.message);
+    throw Exception("Error when get product.");
+  }
+}

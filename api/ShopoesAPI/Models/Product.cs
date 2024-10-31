@@ -23,10 +23,17 @@ public partial class Product
     public string? ImageProduct { get; set; }
 
     public bool IsValid { get; set; }
+  
+    [JsonRequired]
     public virtual Brand IdBrandNavigation { get; set; } = null!;
+  
+    [JsonRequired]
     public virtual Category IdCategoryNavigation { get; set; } = null!;
+  
     [JsonIgnore]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+  
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+  
     public virtual ICollection<ProductVarient> ProductVarients { get; set; } = new List<ProductVarient>();
 }
