@@ -338,6 +338,9 @@ class _CartScreenState extends State<CartScreen> {
                               Navigator.pop(context);
                               if (check) {
                                 cart.quantity += -1;
+                                if (cart.quantity < 0) {
+                                  cart.quantity = 0;
+                                }
                                 setState(() {});
                               } else {
                                 WarningToast(
