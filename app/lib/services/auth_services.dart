@@ -126,7 +126,7 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
     throw Exception("Sign in time out");
   }
   Dio _dio = Dio();
-  
+
   try {
     final response = await _dio.post(
       url,
@@ -172,6 +172,29 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
     } else {
       print(e.response!.data);
       throw Exception(e.response!.data);
+    }
+  }
+}
+
+Future<bool> RequestNewPassword(String email) async {
+  Dio _dio = Dio();
+  final url = 'https://10.0.2.2:7277/api/Auth/ForgotPassword?email=$email';
+  Options _options = Options(
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  );
+  try {
+    await _dio.post(
+      url,
+      options: _options,
+    );
+    return true;
+  } on DioException catch (e) {
+    if (e.response!.statusCode == 400) {
+      throw Exception(e.response!.data);
+    } else {
+      return false;
     }
   }
 }

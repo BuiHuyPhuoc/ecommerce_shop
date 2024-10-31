@@ -29,10 +29,10 @@ class _SignInScreenState extends State<SignInScreen> {
   void initState() {
     _emailController = new TextEditingController();
     _passwordController = new TextEditingController();
-    // _emailController.text = widget.email;
-    // _passwordController.text = widget.password;
-    _emailController.text = "buihuyphuoc123@gmail.com";
-    _passwordController.text = "String2k3.";
+    _emailController.text = widget.email;
+    _passwordController.text = widget.password;
+    // _emailController.text = "buihuyphuoc123@gmail.com";
+    // _passwordController.text = "String2k3.";
     super.initState();
   }
 
