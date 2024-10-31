@@ -150,25 +150,17 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         token = preferences.getString("token");
         try {
-
-        final response = await _dio.post(
-          url,
-          data: {
-            'currentPassword': request.currentPassword,
-            'newPassword': request.newPassword,
-            'confirmPassword': request.confirmPassword,
-          },
-          options: Options(
-            headers: {
+          final response = await _dio.post(
+            url,
+            data: {
+              'currentPassword': request.currentPassword,
+              'newPassword': request.newPassword,
+              'confirmPassword': request.confirmPassword,
+            },
+            options: Options(headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
-            },
-            options: Options(
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer $token',
-              },
-            ),
+            }),
           );
           print(response.data);
           return true;
@@ -186,15 +178,18 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
   }
 }
 
-Future<String?> ForgotPassword(String email) async {
+Future<bool> ForgotPassword(String email) async {
   final url = 'https://10.0.2.2:7277/api/Auth/ForgotPassword/?email=${email}';
   Dio _dio = Dio();
 
   try {
-    var respond = await _dio.post(url);
-    return respond.data;
+    await _dio.post(url);
+    return true;
   } on DioException catch (e) {
-    print(e.response!.data);
-    throw Exception(e.response!.data);
+    if (e.response!.statusCode == 400) {
+      throw Exception(e.message);
+    } else {
+      return false;
+    }
   }
 }
