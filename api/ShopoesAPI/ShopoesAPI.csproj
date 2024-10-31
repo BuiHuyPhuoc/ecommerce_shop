@@ -24,12 +24,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EditorConfigFiles Remove="D:\APP DEVELOP\ecommerce_shop\api\ShopoesAPI\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="D:\APP DEVELOP\ecommerce_shop\api\ShopoesAPI\.editorconfig" />
-  </ItemGroup>
-
 </Project>
