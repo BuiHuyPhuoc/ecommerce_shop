@@ -131,7 +131,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   _activateFor15Seconds();
                   LoadingDialog(context);
                   try {
-                    var check = await RequestNewPassword(_email);
+                    bool check = await ForgotPassword(_email);
                     if (check) {
                       SuccessToast(
                         context: context,
