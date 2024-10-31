@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ecommerce_shop/firebase_options.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
+import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
 import 'package:ecommerce_shop/screens/payment_method_screen.dart';
@@ -56,7 +57,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
       return MaterialApp(
-        home: NavigationScreen(pageNumber: 2,),
+        home: ForgotPasswordScreen(),
         theme: lightMode,
       );
     });

@@ -57,6 +57,40 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Don\'t have account?",
+                        style: GoogleFonts.manrope(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primaryFixed,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primaryFixed,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Get Started",
+                            style: GoogleFonts.manrope(
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).colorScheme.onPrimaryFixed,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 SizedBox(
                   height: 30,
                 ),
@@ -70,7 +104,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                 ),
                 Text(
-                  "ĐĂNG NHẬP",
+                  "LOGIN",
                   style: GoogleFonts.manrope(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -81,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 10,
                 ),
                 Text(
-                  "Và bắt đầu mua sắm theo phong cách của bạn",
+                  "And start shopping by your style",
                   style: GoogleFonts.manrope(
                     fontSize: 16,
                     color: Theme.of(context).colorScheme.onSurface,
@@ -105,7 +139,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     context: context,
-                    hintText: "Email của bạn"),
+                    hintText: "Email"),
                 SizedBox(
                   height: 16,
                 ),
@@ -116,7 +150,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   context: context,
-                  hintText: "Nhập mật khẩu",
+                  hintText: "Password",
                   obscureText: _isObscure,
                   suffixIcon: IconButton(
                     onPressed: () {
@@ -142,7 +176,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        "ĐĂNG NHẬP",
+                        "LOGIN",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -154,16 +188,25 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 SizedBox(height: 10),
                 GestureDetector(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          (MaterialPageRoute(
-                              builder: (builder) => SignUpScreen())),
-                          (dynamic Route) => false);
-                    },
-                    child: Center(
-                      child: Text("Đăng ký ngay"),
-                    ))
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        (MaterialPageRoute(
+                            builder: (builder) => SignUpScreen())),
+                        (dynamic Route) => false);
+                  },
+                  child: Text(
+                    "Forgot password?",
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryFixed
+                          .withOpacity(0.6),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
