@@ -1,9 +1,10 @@
 import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/services/cart_services.dart';
 import 'package:ecommerce_shop/services/product_services.dart';
-import 'package:ecommerce_shop/widgets/cart_button.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,15 +54,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Scaffold(
                 backgroundColor: Colors.white,
                 appBar: CustomAppBar(
-                    leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back),
-                    ),
-                    context: context,
-                    title: "Poduct Details",
-                    actions: [CartButton()]),
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.arrow_back),
+                  ),
+                  context: context,
+                  title: "Poduct Details",
+                  //actions: [CartButton()],
+                ),
                 body: SingleChildScrollView(
                   child: Container(
                     child: Column(
@@ -306,13 +308,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         SizedBox(height: 10),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            if (quantity == 0 ) {
+                              NotifyToast(
+                                context: context,
+                                message: "Please pick at least 1 quantity",
+                              ).ShowToast();
+                              return;
+                            }
                             if (selectedVarient == null) {
                               NotifyToast(
                                 context: context,
                                 message: "Please pick up the size",
                               ).ShowToast();
                               return;
+                            } else {
+                              try {
+                                LoadingDialog(context);
+                                bool check = await AddToCart(
+                                    quantity: quantity,
+                                    idProductVarient: getProduct
+                                        .productVarients[selectedVarient!].id);
+                                Navigator.pop(context);
+                                if (check) {
+                                  SuccessToast(
+                                          context: context,
+                                          message: "Add to cart success")
+                                      .ShowToast();
+                                } else {
+                                  WarningToast(
+                                    context: context,
+                                    message:
+                                        "Add to cart failed. Please retry later.",
+                                  ).ShowToast();
+                                }
+                              } catch (e) {
+                                WarningToast(
+                                  context: context,
+                                  message: e.toString(),
+                                ).ShowToast();
+                              }
                             }
                           },
                           child: Container(

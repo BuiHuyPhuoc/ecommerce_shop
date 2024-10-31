@@ -30,7 +30,6 @@ public partial class Product
     [JsonIgnore]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
-    [JsonIgnore]
     public virtual ICollection<ProductVarient> ProductVarients { get; set; } = new List<ProductVarient>();
 
 }
