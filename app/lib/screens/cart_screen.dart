@@ -3,6 +3,8 @@ import 'package:ecommerce_shop/models/cart.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
 import 'package:ecommerce_shop/services/cart_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
+import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -328,22 +330,64 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.remove,
-                            color: Colors.black,
-                            size: 20,
+                          GestureDetector(
+                            onTap: () async {
+                              LoadingDialog(context);
+                              bool check =
+                                  await UpdateCart(idCart: cart.id, amount: -1);
+                              Navigator.pop(context);
+                              if (check) {
+                                cart.quantity += -1;
+                                setState(() {});
+                              } else {
+                                WarningToast(
+                                        context: context,
+                                        message: "Update quantity failed")
+                                    .ShowToast();
+                              }
+                            },
+                            child: Icon(
+                              Icons.remove,
+                              color: Colors.black,
+                              size: 22,
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 6),
                             child: Text(
-                              "1",
+                              cart.quantity.toString(),
                               style: GoogleFonts.roboto(fontSize: 16),
                             ),
                           ),
-                          Icon(
-                            Icons.add,
-                            color: Colors.black,
-                            size: 20,
+                          GestureDetector(
+                            onTap: () async {
+                              try {
+                                LoadingDialog(context);
+                                bool check = await UpdateCart(
+                                    idCart: cart.id, amount: 1);
+                                Navigator.pop(context);
+                                if (check) {
+                                  cart.quantity += 1;
+                                  setState(() {});
+                                } else {
+                                  WarningToast(
+                                          context: context,
+                                          message: "Update quantity failed")
+                                      .ShowToast();
+                                }
+                              } catch (e) {
+                                WarningToast(
+                                  context: context,
+                                  message: e.toString(),
+                                ).ShowToast();
+                                return;
+                              }
+                            },
+                            child: Icon(
+                              Icons.add,
+                              color: Colors.black,
+                              size: 22,
+                            ),
                           ),
                         ],
                       ),

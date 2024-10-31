@@ -47,3 +47,55 @@ Future<List<Cart>> GetCarts() async {
     }
   }
 }
+
+Future<bool> UpdateCart({required int idCart, required int amount}) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? token = preferences.getString("token");
+  Dio _dio = Dio();
+  var url = "https://10.0.2.2:7277/api/Cart/UpdateCart";
+  var _data = {
+    "id": idCart,
+    "amount": amount,
+  };
+  var _options = Options(
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (token == null) {
+    throw Exception("Login time out");
+  } else {
+    try {
+      await _dio.put(
+        url,
+        options: _options,
+        data: _data,
+      );
+      return true;
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 401) {
+        bool checkGetNewToken = await RequestNewToken();
+        if (checkGetNewToken) {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          token = preferences.getString("token");
+          _options = Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          );
+          await _dio.put(
+            url,
+            options: _options,
+            data: _data,
+          );
+          return true;
+        } else {
+          throw Exception("Login time out");
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+}

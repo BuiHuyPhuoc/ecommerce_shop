@@ -58,16 +58,10 @@ namespace ShopoesAPI.Controllers
             }
             else
             {
-                if (request.IsIncrease)
+                dbCart.Quantity += request.Amount;
+                if (dbCart.Quantity < 0)
                 {
-                    dbCart.Quantity += 1;
-                }
-                else
-                {
-                    if (dbCart.Quantity > 0)
-                    {
-                        dbCart.Quantity -= 1;
-                    }
+                    dbCart.Quantity = 0;
                 }
                 await _context.SaveChangesAsync();
                 return Ok();
