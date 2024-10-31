@@ -1,4 +1,10 @@
+import 'dart:async';
+
+import 'package:ecommerce_shop/screens/signin_screen.dart';
+import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/widgets/custom_text_field.dart';
+import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,6 +17,31 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late TextEditingController _emailController;
+  late bool _isWatingResendEmail = false;
+  Timer? _timer;
+  int _remainingTime = 15; // Số giây đếm ngược
+
+  void _activateFor15Seconds() {
+    setState(() {
+      _isWatingResendEmail = true;
+      _remainingTime = 15; // Reset lại thời gian
+    });
+
+    // Bắt đầu bộ đếm thời gian
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _remainingTime--;
+      });
+
+      // Khi thời gian hết, hủy timer và đặt lại _isActive
+      if (_remainingTime == 0) {
+        _timer?.cancel();
+        setState(() {
+          _isWatingResendEmail = false;
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -21,6 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   void dispose() {
     _emailController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -66,8 +98,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               "We will send new password to your email.",
               style: GoogleFonts.manrope(
                 fontSize: 16,
-                color:
-                    Theme.of(context).colorScheme.primaryFixed,
+                color: Theme.of(context).colorScheme.primaryFixed,
               ),
               textAlign: TextAlign.center,
             ),
@@ -80,7 +111,49 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             SizedBox(height: 10),
             GestureDetector(
-              onTap: () => null,
+              onTap: () async {
+                String _email = _emailController.text.trim();
+                if (_email.isEmpty || _email.length == 0) {
+                  NotifyToast(
+                    context: context,
+                    message: "Please type your email",
+                  ).ShowToast();
+                  return;
+                }
+
+                if (_isWatingResendEmail) {
+                  WarningToast(
+                    context: context,
+                    message: "Please try again after $_remainingTime seconds",
+                  ).ShowToast();
+                  return;
+                } else {
+                  _activateFor15Seconds();
+                  LoadingDialog(context);
+                  try {
+                    var check = await RequestNewPassword(_email);
+                    if (check) {
+                      SuccessToast(
+                        context: context,
+                        message: "Please check your email to get new password",
+                        duration: Duration(seconds: 3),
+                      ).ShowToast();
+                    } else {
+                      WarningToast(
+                        context: context,
+                        message: "Error when send email.",
+                      ).ShowToast();
+                    }
+                  } catch (e) {
+                    WarningToast(
+                      context: context,
+                      message: e.toString().replaceAll("Exception: ", ""),
+                    ).ShowToast();
+                  } finally {
+                    Navigator.pop(context);
+                  }
+                }
+              },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 12),
                 width: double.infinity,
@@ -101,22 +174,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.arrow_back),
-                  SizedBox(width: 10),
-                  Text(
-                    "Back to login",
-                    style: GoogleFonts.manrope(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primaryFixed,
-                    ),
-                  )
-                ],
+            GestureDetector(
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (builder) => SignInScreen(email: _emailController.text,)),
+                    (dynamic Route) => false);
+              },
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.arrow_back),
+                    SizedBox(width: 10),
+                    Text(
+                      "Back to login",
+                      style: GoogleFonts.manrope(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primaryFixed,
+                      ),
+                    )
+                  ],
+                ),
               ),
             )
           ],
