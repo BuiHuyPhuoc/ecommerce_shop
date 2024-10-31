@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShopoesAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a645bd987725230e71fda344c7a1e045ded2249")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45f18cac281480d58934d09ac627e0a03a4cea13")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShopoesAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShopoesAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
