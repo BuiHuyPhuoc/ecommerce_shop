@@ -17,7 +17,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late TextEditingController _emailController;
-
   late bool _isWatingResendEmail = false;
   Timer? _timer;
   int _remainingTime = 15; // Số giây đếm ngược
@@ -89,6 +88,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Text(
               "Forgot Password?",
               style: GoogleFonts.manrope(
+
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primaryFixed),
