@@ -126,7 +126,6 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
     throw Exception("Sign in time out");
   }
   Dio _dio = Dio();
-  
   try {
     final response = await _dio.post(
       url,
@@ -142,7 +141,7 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
         },
       ),
     );
-    print(response.data.toString());
+    print(response.data);
     return true;
   } on DioError catch (e) {
     if (e.response?.statusCode == 401) {
@@ -150,6 +149,8 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
       if (checkGetNewToken) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         token = preferences.getString("token");
+        try {
+
         final response = await _dio.post(
           url,
           data: {
@@ -162,10 +163,19 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
             },
-          ),
-        );
-        print(response.data.toString());
-        return true;
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
+              },
+            ),
+          );
+          print(response.data);
+          return true;
+        } on DioException catch (e) {
+          print(e.response!.data);
+          throw Exception(e.response!.data);
+        }
       } else {
         throw Exception("Sign in time out");
       }
@@ -173,5 +183,18 @@ Future<bool> ChangePassword({required Changepasswordrequest request}) async {
       print(e.response!.data);
       throw Exception(e.response!.data);
     }
+  }
+}
+
+Future<String?> ForgotPassword(String email) async {
+  final url = 'https://10.0.2.2:7277/api/Auth/ForgotPassword/?email=${email}';
+  Dio _dio = Dio();
+
+  try {
+    var respond = await _dio.post(url);
+    return respond.data;
+  } on DioException catch (e) {
+    print(e.response!.data);
+    throw Exception(e.response!.data);
   }
 }

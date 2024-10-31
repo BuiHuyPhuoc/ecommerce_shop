@@ -5,6 +5,5 @@ namespace ShopoesAPI.Models;
 
 public partial class BrandDTO
 {
-
     public string NameBrand { get; set; } = null!;
 }

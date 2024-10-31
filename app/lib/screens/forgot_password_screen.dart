@@ -11,6 +11,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late TextEditingController _emailController;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Text(
               "Forgot Password?",
               style: GoogleFonts.manrope(
+
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primaryFixed),

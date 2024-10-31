@@ -28,10 +28,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> GetData() async {
     customer = GetCustomerDTOByJwtToken();
+    setState(() {});
   }
 
   @override
   void initState() {
+    GetData();
     nameController = new TextEditingController();
     phoneController = new TextEditingController();
     oldPasswordController = new TextEditingController();
@@ -52,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    GetData();
+    //GetData();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -92,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, 'reload');
                                 },
                                 child: Text(
                                   "ESC",
@@ -129,7 +131,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   onTap: () async {
                                     await UpdateAvatar(context);
                                     await GetData();
-                                    setState(() {});
+                                    setState(() {
+                                      
+                                    });
                                   },
                                   child: Container(
                                     width: 34,
@@ -304,12 +308,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   oldPasswordController.clear();
                   newPasswordController.clear();
                   confirmNewPasswordController.clear();
-                } on SocketException catch (e) {
-                  // Xử lý lỗi kết nối mạng
-                  WarningToast(
-                    context: context,
-                    message: 'Network error: ${e.toString()}',
-                  ).ShowToast();
                 } catch (e) {
                   WarningToast(
                     context: context,
@@ -396,7 +394,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (phone == "") {
                 phone = getCustomer.phone;
               }
-              UpdateProfile(context, name, phone);
+              await UpdateProfile(context, name, phone);
               nameController.clear();
               phoneController.clear();
               await GetData();

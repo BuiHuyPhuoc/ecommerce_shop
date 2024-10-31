@@ -14,7 +14,9 @@ public partial class ShopoesDbContext : DbContext
         : base(options)
     {
     }
+    
     public virtual DbSet<Cart> Carts { get; set; }
+
     public virtual DbSet<Account> Accounts { get; set; }
 
     public virtual DbSet<Address> Addresses { get; set; }
@@ -213,6 +215,7 @@ public partial class ShopoesDbContext : DbContext
 
             entity.Property(e => e.NameRole).HasMaxLength(50);
         });
+
 
         modelBuilder.Entity<Cart>(entity =>
         {
