@@ -26,6 +26,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             ),
             centerTitle: false),
         body: Container(
+          width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,6 +102,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
   Widget AddressItemChoice(int value) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Stack(
         children: [
@@ -129,55 +131,65 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                 SizedBox(
                   width: 10,
                 ),
-                Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .outlineVariant
-                              .withOpacity(0.2),
-                          width: 1),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: "Huy Phước",
-                          style: GoogleFonts.manrope(
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.primary),
-                          children: [
-                            TextSpan(
-                              text: "   |   ",
-                              style: GoogleFonts.manrope(
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.5),
-                              ),
-                            ),
-                            TextSpan(
-                              text: "0334379439",
-                              style: GoogleFonts.manrope(
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.5),
-                              ),
-                            )
-                          ],
-                        ),
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .outlineVariant
+                                .withOpacity(0.2),
+                            width: 1),
                       ),
-                      Text("119, đường Giác Đạo"),
-                      Text("xã Trung Chánh, huyện Hóc Môn, TP.Hồ Chí Minh")
-                    ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: "Huy Phước",
+                            style: GoogleFonts.manrope(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "   |   ",
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.5),
+                                ),
+                              ),
+                              TextSpan(
+                                text: "0334379439",
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.5),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Text("119, đường Giác Đạo"),
+                        Text(
+                          "xã Trung Chánh, huyện Hóc Môn, TP.Hồ Chí Minhhhhhhhh",
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow
+                              .ellipsis, // Thêm dấu "..." khi bị giới hạn
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -196,6 +208,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
               child: Text(
                 "Sửa",
                 style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.bold,
                   fontSize: 14,
                   color: Colors.red,
                 ),
