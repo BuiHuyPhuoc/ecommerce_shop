@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:ecommerce_shop/models/address.dart';
+import 'package:ecommerce_shop/screens/signin_screen.dart';
+import 'package:ecommerce_shop/services/address_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:flutter/material.dart';
@@ -12,85 +17,153 @@ class SelectAddressScreen extends StatefulWidget {
 
 class _SelectAddressScreenState extends State<SelectAddressScreen> {
   int _selectedOption = 1;
+  late Future<List<Address>> addresses;
+
+  void GetData() {
+    addresses = GetAddress();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    GetData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: CustomAppBar(
-            context: context,
-            title: "Chọn địa chỉ nhận hàng",
-            leading: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.arrow_back),
-            ),
-            centerTitle: false),
-        body: Container(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Text(
-                  "Địa chỉ",
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+          context: context,
+          title: "Choose address get order",
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.arrow_back),
+          ),
+          centerTitle: false,
+        ),
+        body: FutureBuilder(
+          future: addresses,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                color: Theme.of(context).colorScheme.background,
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                if (snapshot.error.runtimeType == TimeoutException) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    NotifyToast(
+                      context: context,
+                      message: snapshot.error.toString(),
+                    ).ShowToast();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignInScreen()),
+                      (route) => false,
+                    );
+                  });
+                }
+                return Container(
+                  child: Center(
+                    child: Text("Error"),
+                  ),
+                );
+              }
+              List<Address>? getAddress = snapshot.data;
+              if (getAddress == null) {
+                return Container(
+                  child: Center(
+                    child: Text("Address not found"),
+                  ),
+                );
+              }
+              return Container(
+                width: double.infinity,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AddressItemChoice(1),
-                    AddressItemChoice(2),
-                    AddressItemChoice(3),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Text(
+                        "Address",
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      color: Theme.of(context).colorScheme.background,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        itemCount: getAddress.length,
+                        itemBuilder: (context, index) {
+                          return AddressItemChoice(
+                              getAddress[index], index + 1);
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      color: Theme.of(context).colorScheme.background,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 26,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              "Add new address",
+                              style: GoogleFonts.manrope(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
-              ),
-              SizedBox(height: 6),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                color: Theme.of(context).colorScheme.background,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 26,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        "Thêm địa chỉ mới",
-                        style: GoogleFonts.manrope(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
+              );
+            }
+            return Container();
+          },
         ),
-        bottomSheet: IntrinsicHeight(
+        bottomNavigationBar: IntrinsicHeight(
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            color: Theme.of(context).colorScheme.background,
-            child: Center(
-              child: Text(
-                "XÁC NHẬN",
-                style: GoogleFonts.manrope(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+            padding: EdgeInsets.all(10),
+            color: Theme.of(context).colorScheme.onPrimaryFixed,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryFixed,
+                  borderRadius: BorderRadius.circular(12)),
+              child: Center(
+                child: Text(
+                  "ACCEPT",
+                  style: GoogleFonts.manrope(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                  ),
                 ),
               ),
             ),
@@ -100,7 +173,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
     );
   }
 
-  Widget AddressItemChoice(int value) {
+  Widget AddressItemChoice(Address address, int value) {
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(vertical: 10),
@@ -150,7 +223,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                       children: [
                         RichText(
                           text: TextSpan(
-                            text: "Huy Phước",
+                            text: address.receiverName,
                             style: GoogleFonts.manrope(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
@@ -168,7 +241,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                                 ),
                               ),
                               TextSpan(
-                                text: "0334379439",
+                                text: address.receiverPhone,
                                 style: GoogleFonts.manrope(
                                   fontSize: 14,
                                   color: Theme.of(context)
@@ -180,13 +253,12 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                             ],
                           ),
                         ),
-                        Text("119, đường Giác Đạo"),
+                        Text(address.street),
                         Text(
-                          "xã Trung Chánh, huyện Hóc Môn, TP.Hồ Chí Minhhhhhhhh",
+                          "${address.ward}, ${address.district}, ${address.city}",
                           maxLines: 2,
                           softWrap: true,
-                          overflow: TextOverflow
-                              .ellipsis, // Thêm dấu "..." khi bị giới hạn
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -202,11 +274,11 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
               onTap: () {
                 NotifyToast(
                   context: context,
-                  message: "Chức năng hiện chưa khả dụng",
+                  message: "Feature is comming soon.",
                 ).ShowToast();
               },
               child: Text(
-                "Sửa",
+                "Edit",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,

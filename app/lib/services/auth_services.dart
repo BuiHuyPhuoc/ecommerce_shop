@@ -193,3 +193,9 @@ Future<bool> ForgotPassword(String email) async {
     }
   }
 }
+
+Future<String?> GetToken() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  String? token = preferences.getString("token");
+  return token;
+}
