@@ -83,7 +83,7 @@ namespace ShopoesAPI.Controllers
             return Ok(dbAddress);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("DeleteAddress")]
         [Authorize]
         public async Task<IActionResult> DeleteAddress(int id)
@@ -109,7 +109,7 @@ namespace ShopoesAPI.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateAddress(int id, [FromBody] AddAddressDTO address)
         {
-            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;   
             var dbCustomer = await _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefaultAsync();
             if (dbCustomer == null)
             {

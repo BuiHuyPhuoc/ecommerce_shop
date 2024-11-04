@@ -6,6 +6,7 @@ import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -160,6 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     // Phone Number Field
                     TextFormField(
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       controller: phoneNumberTextField,
                       keyboardType: TextInputType.phone,
                       validator: (value) {
