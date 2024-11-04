@@ -11,12 +11,13 @@ Widget CustomTextField(
     int maxLines = 1,
     bool readOnly = false,
     String? value,
-    List<FilteringTextInputFormatter>? inputFormatters,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
     bool enable = true,
     bool enableSuggestions = true,
     bool autocorrect = true,
-    InputDecoration? decoration
+    InputDecoration? decoration,
+    TextInputType? keyboardType
     }) {
   return Container(
     padding: EdgeInsets.all(5),
@@ -25,6 +26,7 @@ Widget CustomTextField(
       borderRadius: BorderRadius.circular(20),
     ),
     child: TextFormField(
+      keyboardType: keyboardType,
       validator: validator,
       inputFormatters: inputFormatters,
       initialValue: value,

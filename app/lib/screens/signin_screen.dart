@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
 import 'package:ecommerce_shop/screens/signup_screen.dart';
 import 'package:ecommerce_shop/widgets/custom_text_field.dart';
@@ -31,8 +32,8 @@ class _SignInScreenState extends State<SignInScreen> {
     _passwordController = new TextEditingController();
     _emailController.text = widget.email;
     _passwordController.text = widget.password;
-    // _emailController.text = "buihuyphuoc123@gmail.com";
-    // _passwordController.text = "String2k3.";
+    _emailController.text = "buihuyphuoc123@gmail.com";
+    _passwordController.text = "String2k3@";
     super.initState();
   }
 
@@ -70,20 +71,31 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       SizedBox(width: 10),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryFixed,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Get Started",
-                            style: GoogleFonts.manrope(
-                              fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).colorScheme.onPrimaryFixed,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primaryFixed,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Get Started",
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryFixed,
+                              ),
                             ),
                           ),
                         ),
@@ -192,7 +204,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Navigator.pushAndRemoveUntil(
                         context,
                         (MaterialPageRoute(
-                            builder: (builder) => SignUpScreen())),
+                            builder: (builder) => ForgotPasswordScreen())),
                         (dynamic Route) => false);
                   },
                   child: Text(

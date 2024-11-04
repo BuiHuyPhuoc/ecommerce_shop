@@ -544,6 +544,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  search_choices:
+    dependency: "direct main"
+    description:
+      name: search_choices
+      sha256: "10a50815c0190922dadae81cce723266bfc57d134911565c37c96d4527312bde"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.11"
   shared_preferences:
     dependency: "direct main"
     description:

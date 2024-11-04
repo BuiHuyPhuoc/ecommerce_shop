@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopoesAPI.Models;
 
@@ -11,9 +12,11 @@ using ShopoesAPI.Models;
 namespace ShopoesAPI.Migrations
 {
     [DbContext(typeof(ShopoesDbContext))]
-    partial class ShopoesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241101063334_AddColumnAddress")]
+    partial class AddColumnAddress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,10 +94,6 @@ namespace ShopoesAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ReceiverName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ReceiverPhone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

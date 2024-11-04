@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 import 'dart:io';
 import 'package:ecommerce_shop/firebase_options.dart';
+import 'package:ecommerce_shop/screens/add_address_screen.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
 import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
@@ -20,8 +21,8 @@ import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/services/storage/storage_service.dart';
 import 'package:ecommerce_shop/theme/theme.dart';
 import 'package:ecommerce_shop/widgets/item_payment_widget.dart';
-import 'package:ecommerce_shop/widgets/login_check_screen.dart';
-import 'package:ecommerce_shop/widgets/select_address_screen.dart';
+import 'package:ecommerce_shop/screens/login_check_screen.dart';
+import 'package:ecommerce_shop/screens/select_address_screen.dart';
 import 'package:ecommerce_shop/theme/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
       return MaterialApp(
-        home: ForgotPasswordScreen(),
+        home: NavigationScreen(),
         theme: lightMode,
       );
     });
