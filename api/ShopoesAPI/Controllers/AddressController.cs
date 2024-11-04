@@ -83,7 +83,7 @@ namespace ShopoesAPI.Controllers
             return Ok(dbAddress);
         }
 
-        [HttpGet]
+        [HttpDelete]
         [Route("DeleteAddress")]
         [Authorize]
         public async Task<IActionResult> DeleteAddress(int id)

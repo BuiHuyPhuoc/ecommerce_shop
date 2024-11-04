@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'package:ecommerce_shop/models/address.dart';
+import 'package:ecommerce_shop/services/address_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_text_field.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show FilteringTextInputFormatter, rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:search_choices/search_choices.dart';
 
@@ -146,7 +149,21 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: CustomAppBar(context: context, title: "Add Address"),
+      appBar: CustomAppBar(
+        context: context,
+        title: "Add Address",
+        leading: SizedBox(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -163,6 +180,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ),
               SizedBox(height: 10),
               CustomTextField(
+                controller: _nameController,
                 context: context,
                 hintText: "Full name",
                 prefixIcon: Icon(
@@ -172,6 +190,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ),
               SizedBox(height: 10),
               CustomTextField(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.phone,
+                controller: _phoneNumberController,
                 context: context,
                 hintText: "Phone number",
                 prefixIcon: Icon(
@@ -265,6 +286,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ),
               SizedBox(height: 10),
               CustomTextField(
+                controller: _streetNumberController,
                 context: context,
                 hintText: "Home number, Street",
                 prefixIcon: Icon(
@@ -278,7 +300,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       ),
       bottomNavigationBar: IntrinsicHeight(
         child: GestureDetector(
-          onTap: () {
+          onTap: () async {
             String name = _nameController.text.trim();
             String phone = _phoneNumberController.text.trim();
             String street = _streetNumberController.text.trim();
@@ -310,11 +332,35 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ).ShowToast();
               return;
             }
-            NotifyToast(
-              context: context,
-              message: "Feature is comming soon",
-            ).ShowToast();
-            
+            Address newAddress = new Address(
+                receiverName: name,
+                receiverPhone: phone,
+                city: _province!,
+                district: _district!,
+                ward: _ward!,
+                street: street,
+                isDefault: false);
+            try {
+              LoadingDialog(context);
+              bool check = await AddAddress(newAddress);
+              Navigator.pop(context);
+              if (check) {
+                SuccessToast(context: context, message: "Add address success")
+                    .ShowToast();
+                // Back to address page
+                Navigator.pop(context, 'reload');
+              } else {
+                WarningToast(context: context, message: "Add address failed")
+                    .ShowToast();
+              }
+            } catch (e) {
+              Navigator.pop(context);
+              WarningToast(
+                context: context,
+                message: e.toString(),
+                duration: Duration(seconds: 2),
+              ).ShowToast();
+            }
           },
           child: Container(
             color: Theme.of(context).colorScheme.background,

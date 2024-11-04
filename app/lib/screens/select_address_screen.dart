@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:ecommerce_shop/models/address.dart';
+import 'package:ecommerce_shop/screens/add_address_screen.dart';
 import 'package:ecommerce_shop/screens/signin_screen.dart';
 import 'package:ecommerce_shop/services/address_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
+import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,9 +38,11 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: CustomAppBar(
           context: context,
-          title: "Choose address get order",
+          title: "Choose address",
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: Icon(Icons.arrow_back),
           ),
           centerTitle: false,
@@ -116,27 +120,42 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                       ),
                     ),
                     SizedBox(height: 6),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      color: Theme.of(context).colorScheme.background,
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_circle_outline,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 26,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "Add new address",
-                              style: GoogleFonts.manrope(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (builder) => AddAddressScreen(),
+                          ),
+                        ).then((onValue) {
+                          if (onValue == 'reload') {
+                            GetData();
+                            setState(() {});
+                          }
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        color: Theme.of(context).colorScheme.background,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_circle_outline,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 26,
                               ),
-                            )
-                          ],
+                              SizedBox(width: 10),
+                              Text(
+                                "Add new address",
+                                style: GoogleFonts.manrope(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -271,14 +290,33 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             top: 0,
             right: 0,
             child: GestureDetector(
-              onTap: () {
-                NotifyToast(
-                  context: context,
-                  message: "Feature is comming soon.",
-                ).ShowToast();
+              onTap: () async {
+                LoadingDialog(context);
+                bool check = await DeleteAddress(address.id!);
+                Navigator.pop(context);
+                try {
+                  if (check) {
+                    SuccessToast(
+                      context: context,
+                      message: "Delete address success",
+                    ).ShowToast();
+                    GetData();
+                    setState(() {});
+                  } else {
+                    WarningToast(
+                      context: context,
+                      message: "Delete failed",
+                    ).ShowToast();
+                  }
+                } catch (e) {
+                  WarningToast(
+                    context: context,
+                    message: e.toString(),
+                  ).ShowToast();
+                }
               },
               child: Text(
-                "Edit",
+                "Delete",
                 style: GoogleFonts.manrope(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
