@@ -118,6 +118,66 @@ Future<bool> AddAddress(Address address) async {
   }
 }
 
+Future<bool> UpdateAddress(Address address) async {
+  final url = 'https://10.0.2.2:7277/api/Address/UpdateAddress/${address.id}';
+  String? token = await GetToken();
+  Dio _dio = Dio();
+  var _data = {
+    "receiverName": address.receiverName,
+    "receiverPhone": address.receiverPhone,
+    "city": address.city,
+    "district": address.district,
+    "ward": address.ward,
+    "street": address.street
+  };
+  if (token == null) {
+    throw TimeoutException("Sign in time out");
+  } else {
+    try {
+      await _dio.put(url,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json'
+            },
+          ),
+          data: _data);
+      return true;
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 401) {
+        bool check = await RequestNewToken();
+        if (check) {
+          token = await GetToken();
+          if (token == null) {
+            throw TimeoutException("Sign in time out");
+          }
+          try {
+            await _dio.put(url,
+                options: Options(
+                  headers: {
+                    'Authorization': 'Bearer $token',
+                    'Content-Type': 'application/json'
+                  },
+                ),
+                data: _data);
+            return true;
+          } on DioError catch (e) {
+            if (e.response!.statusCode == 401) {
+              throw TimeoutException("Login time out");
+            } else {
+              throw Exception(e.response!.data);
+            }
+          }
+        } else {
+          throw TimeoutException("Login time out");
+        }
+      } else {
+        throw Exception("Failed when get data");
+      }
+    }
+  }
+}
+
 Future<bool> DeleteAddress(int idAddress) async {
   final url = 'https://10.0.2.2:7277/api/Address/DeleteAddress?id=$idAddress';
   String? token = await GetToken();

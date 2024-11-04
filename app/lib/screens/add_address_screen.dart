@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:ecommerce_shop/models/address.dart';
 import 'package:ecommerce_shop/services/address_services.dart';
@@ -6,12 +7,16 @@ import 'package:ecommerce_shop/widgets/custom_text_field.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show FilteringTextInputFormatter, rootBundle;
+import 'package:flutter/services.dart'
+    show FilteringTextInputFormatter, rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:search_choices/search_choices.dart';
 
+// ignore: must_be_immutable
 class AddAddressScreen extends StatefulWidget {
-  const AddAddressScreen({super.key});
+  AddAddressScreen({super.key, this.address});
+
+  Address? address;
 
   @override
   State<AddAddressScreen> createState() => _AddAddressScreenState();
@@ -46,10 +51,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     setState(() {
       isLoading = false;
     });
-    //await loadVietnamDistrictData();
   }
 
-  void loadVietnamDistrictData() async {
+  void loadVietnamDistrictData() {
     List<dynamic> data = [];
     for (var province in _listProvince!) {
       if (province["name"] == _province) {
@@ -66,7 +70,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     setState(() {});
   }
 
-  void loadVietnamWardData() async {
+  void loadVietnamWardData() {
     List<dynamic> data = [];
     for (var district in _listDistrict!) {
       if (district["name"] == _district) {
@@ -82,13 +86,30 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     setState(() {});
   }
 
+  void LoadDataWhenUpdate() async {
+    await loadVietnamAddressData();
+    loadVietnamDistrictData();
+    loadVietnamWardData();
+  }
+
   @override
   void initState() {
     super.initState();
-    loadVietnamAddressData();
     _nameController = new TextEditingController();
     _phoneNumberController = new TextEditingController();
     _streetNumberController = new TextEditingController();
+    if (widget.address != null) {
+      _nameController.text = widget.address!.receiverName;
+      _phoneNumberController.text = widget.address!.receiverPhone;
+      _streetNumberController.text = widget.address!.street;
+      _province = widget.address!.city;
+      _district = widget.address!.district;
+      _ward = widget.address!.ward;
+      setState(() {});
+      LoadDataWhenUpdate();
+    } else {
+      loadVietnamAddressData();
+    }
   }
 
   @override
@@ -144,6 +165,105 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
             child: Text(ward["name"] as String),
           ),
         );
+      }
+    }
+
+    Future<void> AddressFunction() async {
+      String name = _nameController.text.trim();
+      String phone = _phoneNumberController.text.trim();
+      String street = _streetNumberController.text.trim();
+      if (name == "" || name.length == 0) {
+        WarningToast(
+          context: context,
+          message: "Name is not filled.",
+        ).ShowToast();
+        return;
+      }
+      if (phone == "" || phone.length == 0) {
+        WarningToast(
+          context: context,
+          message: "Phone number is not filled.",
+        ).ShowToast();
+        return;
+      }
+      if (street == "" || street.length == 0) {
+        WarningToast(
+          context: context,
+          message: "Street is not filled.",
+        ).ShowToast();
+        return;
+      }
+      if (_province == null || _district == null || _ward == null) {
+        WarningToast(
+          context: context,
+          message: "Address is not filled",
+        ).ShowToast();
+        return;
+      }
+
+      if (widget.address == null) {
+        // add new address
+        Address newAddress = new Address(
+            receiverName: name,
+            receiverPhone: phone,
+            city: _province!,
+            district: _district!,
+            ward: _ward!,
+            street: street,
+            isDefault: false);
+        try {
+          LoadingDialog(context);
+          bool check = await AddAddress(newAddress);
+          Navigator.pop(context);
+          if (check) {
+            SuccessToast(context: context, message: "Add address success")
+                .ShowToast();
+            // Back to address page
+            Navigator.pop(context, 'reload');
+          } else {
+            WarningToast(context: context, message: "Add address failed")
+                .ShowToast();
+          }
+        } catch (e) {
+          Navigator.pop(context);
+          WarningToast(
+            context: context,
+            message: e.toString(),
+            duration: Duration(seconds: 2),
+          ).ShowToast();
+        }
+      } else {
+        // update address
+        Address newAddress = new Address(
+            id: widget.address!.id,
+            receiverName: name,
+            receiverPhone: phone,
+            city: _province!,
+            district: _district!,
+            ward: _ward!,
+            street: street,
+            isDefault: false);
+        try {
+          LoadingDialog(context);
+          bool check = await UpdateAddress(newAddress);
+          Navigator.pop(context);
+          if (check) {
+            SuccessToast(context: context, message: "Update address success")
+                .ShowToast();
+            // Back to address page
+            Navigator.pop(context, 'reload');
+          } else {
+            WarningToast(context: context, message: "Update address failed")
+                .ShowToast();
+          }
+        } catch (e) {
+          Navigator.pop(context);
+          WarningToast(
+            context: context,
+            message: e.toString(),
+            duration: Duration(seconds: 2),
+          ).ShowToast();
+        }
       }
     }
 
@@ -301,66 +421,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       bottomNavigationBar: IntrinsicHeight(
         child: GestureDetector(
           onTap: () async {
-            String name = _nameController.text.trim();
-            String phone = _phoneNumberController.text.trim();
-            String street = _streetNumberController.text.trim();
-            if (name == "" || name.length == 0) {
-              WarningToast(
-                context: context,
-                message: "Name is not filled.",
-              ).ShowToast();
-              return;
-            }
-            if (phone == "" || phone.length == 0) {
-              WarningToast(
-                context: context,
-                message: "Phone number is not filled.",
-              ).ShowToast();
-              return;
-            }
-            if (street == "" || street.length == 0) {
-              WarningToast(
-                context: context,
-                message: "Street is not filled.",
-              ).ShowToast();
-              return;
-            }
-            if (_province == null || _district == null || _ward == null) {
-              WarningToast(
-                context: context,
-                message: "Address is not filled",
-              ).ShowToast();
-              return;
-            }
-            Address newAddress = new Address(
-                receiverName: name,
-                receiverPhone: phone,
-                city: _province!,
-                district: _district!,
-                ward: _ward!,
-                street: street,
-                isDefault: false);
-            try {
-              LoadingDialog(context);
-              bool check = await AddAddress(newAddress);
-              Navigator.pop(context);
-              if (check) {
-                SuccessToast(context: context, message: "Add address success")
-                    .ShowToast();
-                // Back to address page
-                Navigator.pop(context, 'reload');
-              } else {
-                WarningToast(context: context, message: "Add address failed")
-                    .ShowToast();
-              }
-            } catch (e) {
-              Navigator.pop(context);
-              WarningToast(
-                context: context,
-                message: e.toString(),
-                duration: Duration(seconds: 2),
-              ).ShowToast();
-            }
+            await AddressFunction();
           },
           child: Container(
             color: Theme.of(context).colorScheme.background,
@@ -373,7 +434,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ),
               child: Center(
                 child: Text(
-                  "Add new address",
+                  (widget.address == null)
+                      ? "Add new address"
+                      : "Update address",
                   style: GoogleFonts.manrope(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
