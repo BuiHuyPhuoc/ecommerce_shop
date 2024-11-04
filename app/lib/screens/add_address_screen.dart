@@ -303,6 +303,13 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ).ShowToast();
               return;
             }
+            if (_province == null || _district == null || _ward == null) {
+              WarningToast(
+                context: context,
+                message: "Address is not filled",
+              ).ShowToast();
+              return;
+            }
             NotifyToast(
               context: context,
               message: "Feature is comming soon",
