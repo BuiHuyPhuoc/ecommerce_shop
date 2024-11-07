@@ -14,9 +14,8 @@ public partial class Order
 
     public string Status { get; set; } = null!;
 
-    public double Amount { get; set; }
+    public decimal Amount { get; set; }
     [JsonIgnore]
     public virtual Customer IdCustomerNavigation { get; set; } = null!;
-    [JsonIgnore]
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }

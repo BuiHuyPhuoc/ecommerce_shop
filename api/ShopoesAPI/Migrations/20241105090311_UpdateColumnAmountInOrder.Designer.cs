@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShopoesAPI.Models;
 
@@ -11,9 +12,11 @@ using ShopoesAPI.Models;
 namespace ShopoesAPI.Migrations
 {
     [DbContext(typeof(ShopoesDbContext))]
-    partial class ShopoesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105090311_UpdateColumnAmountInOrder")]
+    partial class UpdateColumnAmountInOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,14 +259,14 @@ namespace ShopoesAPI.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<decimal?>("ProductPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("ProductPrice")
+                        .HasColumnType("float");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("SalePrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("SalePrice")
+                        .HasColumnType("float");
 
                     b.HasKey("IdOrder", "IdProduct")
                         .HasName("PK__OrderDet__9167A4641D8B6ECD");
