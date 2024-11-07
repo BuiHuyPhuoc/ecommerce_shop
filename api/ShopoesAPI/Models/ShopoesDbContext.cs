@@ -123,6 +123,11 @@ public partial class ShopoesDbContext : DbContext
                 .HasForeignKey(d => d.IdCustomer)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Orders__IdCustom__4222D4EF");
+
+            entity.HasOne(d => d.IdAddressNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.IdAddress)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            
         });
 
         modelBuilder.Entity<OrderDetail>(entity =>

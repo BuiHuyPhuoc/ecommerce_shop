@@ -6,6 +6,7 @@ namespace ShopoesAPI.DTOs
     {
         public List<int> IdCarts { get; set; }
         public string Status { get; set; }
+        public int IdAddress { get; set; }
 
     }
 }
