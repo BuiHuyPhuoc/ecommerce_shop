@@ -23,6 +23,10 @@ public partial class Address
     public string Street { get; set; } = null!;
 
     public bool IsDefault { get; set; }
+
     [JsonIgnore]
     public virtual Customer IdCustomerNavigation { get; set; } = null!;
+
+    [JsonIgnore]
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

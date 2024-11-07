@@ -28,16 +28,22 @@ namespace ShopoesAPI.Controllers
             try
             {
                 var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
-                var dbCustomer = _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefault();
+                var dbCustomer = await _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefaultAsync();
                 if (dbCustomer == null)
                 {
                     return Unauthorized("User not found");
                 }
-
+                 
+                var dbAddress = await _context.Addresses.FindAsync(order.IdAddress);
+                if (dbAddress == null)
+                {
+                    return BadRequest("Address is invalid");
+                }
                 var newOrder = new Order();
                 newOrder.Date = DateTime.Now;
                 newOrder.IdCustomer = dbCustomer.Id;
                 newOrder.Status = order.Status;
+                newOrder.IdAddress = order.IdAddress;
                 _context.Orders.Add(newOrder);
                 await _context.SaveChangesAsync();
 
