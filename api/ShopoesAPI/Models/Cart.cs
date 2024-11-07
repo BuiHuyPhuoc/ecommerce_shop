@@ -13,8 +13,7 @@ namespace ShopoesAPI.Models
         [JsonInclude]
         public virtual ProductVarient IdProductVarientNavigation { get; set; } = null!;
         [JsonIgnore]
-        public virtual Customer IdCustomerNavigation { get; private set; }
-
+        public virtual Customer? IdCustomerNavigation { get; private set; } = null!;
 
     }
 }
