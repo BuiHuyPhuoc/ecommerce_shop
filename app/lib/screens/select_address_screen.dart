@@ -338,49 +338,118 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                               width: 1),
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Stack(
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              text: address.receiverName,
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                          Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextSpan(
-                                  text: "   |   ",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.5),
+                                RichText(
+                                  text: TextSpan(
+                                    text: address.receiverName,
+                                    style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "   |   ",
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: address.receiverPhone,
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.5),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                                TextSpan(
-                                  text: address.receiverPhone,
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.5),
-                                  ),
-                                )
+                                Text(address.street),
+                                Text(
+                                  "${address.ward}, ${address.district}, ${address.city}",
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
-                          Text(address.street),
-                          Text(
-                            "${address.ward}, ${address.district}, ${address.city}",
-                            maxLines: 2,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: (!address.isDefault)
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      try {
+                                        bool check = await SetDefaultAddress(
+                                            address.id!);
+                                        if (check) {
+                                          SuccessToast(
+                                            context: context,
+                                            message: "Set as default success",
+                                          ).ShowToast();
+                                        } else {
+                                          WarningToast(
+                                            context: context,
+                                            message: "Set as default failed",
+                                          ).ShowToast();
+                                        }
+                                      } on TimeoutException catch (e) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          NotifyToast(
+                                            context: context,
+                                            message: e.message!,
+                                          ).ShowToast();
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SignInScreen()),
+                                            (route) => false,
+                                          );
+                                        });
+                                      } catch (e) {
+                                        WarningToast(
+                                          context: context,
+                                          message: e.toString(),
+                                        ).ShowToast();
+                                      }
+                                      GetData();
+                                      setState(() {});
+                                    },
+                                    child: Text(
+                                      "Set as default",
+                                      style: GoogleFonts.manrope(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                          fontSize: 14),
+                                    ),
+                                  )
+                                : Text(
+                                    "Default",
+                                    style: GoogleFonts.roboto(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryFixed,
+                                        fontSize: 14),
+                                  ),
+                          )
                         ],
                       ),
                     ),
