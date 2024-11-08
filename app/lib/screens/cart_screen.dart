@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/cart.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
+import 'package:ecommerce_shop/models/order_request.dart';
+import 'package:ecommerce_shop/screens/signin_screen.dart';
 import 'package:ecommerce_shop/services/cart_services.dart';
+import 'package:ecommerce_shop/services/order_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
@@ -161,16 +165,66 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
             SizedBox(width: 5),
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: Text(
-                "Buy (${_countSelected.toString()})",
-                style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onPrimary),
+            GestureDetector(
+              onTap: () async {
+                List<int> idCarts = [];
+                for (int i = 0; i < listCarts.length; i++) {
+                  if (_indexSelectedProduct[i]) {
+                    idCarts.add(listCarts[i].id);
+                  }
+                }
+                if (idCarts.length == 0) {
+                  NotifyToast(
+                    context: context,
+                    message: "There is no item to buy",
+                  ).ShowToast();
+                } else {
+                  // Address default is 3
+                  OrderRequest orderRequest = new OrderRequest(
+                      idCarts: idCarts, status: "BOOKED", idAddress: 3);
+                  try {
+                    bool result = await AddOrder(orderRequest);
+                    if (result) {
+                      SuccessToast(
+                              context: context,
+                              message: "Your order has been saved")
+                          .ShowToast();
+                      setState(() {
+                        GetData();
+                      });
+                    } else {
+                      WarningToast(
+                              context: context, message: "Create order failed")
+                          .ShowToast();
+                    }
+                  } on TimeoutException catch (e) {
+                    WarningToast(context: context, message: e.message ?? "")
+                        .ShowToast();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignInScreen(),
+                        ),
+                        (dynamic Route) => false);
+                  } on Exception catch (e) {
+                    WarningToast(
+                            context: context,
+                            message: "Failed: ${e.toString()}")
+                        .ShowToast();
+                  }
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                child: Text(
+                  "Buy (${_countSelected.toString()})",
+                  style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                ),
               ),
             )
           ],
