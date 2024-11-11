@@ -143,6 +143,57 @@ namespace ShopoesAPI.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("GetDefaultAddress")]
+        [Authorize]
+        public async Task<ActionResult<Address>> GetDefaultAddress()
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = await _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefaultAsync();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            var dbDefaultAddress = await _context.Addresses.Where(x => x.IdCustomer == dbCustomer.Id && x.IsDefault).FirstOrDefaultAsync();
+            if (dbDefaultAddress == null)
+            {
+                return BadRequest("This account not have default address");
+            } else
+            {
+                return Ok(dbDefaultAddress);
+            }
+        }
+
+        [HttpPut]
+        [Route("SetDefaultAddress/{idAddress}")]
+        [Authorize]
+        public async Task<IActionResult> SetDefaultAddress(int idAddress)
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = await _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefaultAsync();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            // Get current address default and make it false
+            var getDefaultAddress = await _context.Addresses.Where(x => x.IdCustomer == dbCustomer.Id && x.IsDefault).FirstOrDefaultAsync();
+            if (getDefaultAddress != null)
+            {
+                getDefaultAddress.IsDefault = false;
+            }
+            
+            // Get another address and make it true
+            var dbAddress = await _context.Addresses.FindAsync(idAddress);
+            if (dbAddress == null)
+            {
+                return BadRequest("Address not found");
+            }
+            dbAddress.IsDefault = true;
+            
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
 
     }
 }

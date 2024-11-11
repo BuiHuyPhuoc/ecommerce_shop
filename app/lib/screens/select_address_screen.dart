@@ -34,165 +34,165 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        appBar: CustomAppBar(
-          context: context,
-          title: "Choose address",
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back),
-          ),
-          centerTitle: false,
-        ),
-        body: FutureBuilder(
-          future: addresses,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                if (snapshot.error.runtimeType == TimeoutException) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    NotifyToast(
-                      context: context,
-                      message: snapshot.error.toString(),
-                    ).ShowToast();
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignInScreen()),
-                      (route) => false,
-                    );
-                  });
-                }
-                return Container(
-                  child: Center(
-                    child: Text("Error"),
-                  ),
+    return FutureBuilder(
+      future: addresses,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            if (snapshot.error.runtimeType == TimeoutException) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                NotifyToast(
+                  context: context,
+                  message: snapshot.error.toString(),
+                ).ShowToast();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                  (route) => false,
                 );
-              }
-              List<Address>? getAddress = snapshot.data;
-              if (getAddress == null) {
-                return Container(
-                  child: Center(
-                    child: Text("Address not found"),
-                  ),
-                );
-              }
-              return Container(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Text(
-                        "Address",
-                        style: GoogleFonts.manrope(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      color: Theme.of(context).colorScheme.background,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        itemCount: getAddress.length,
-                        itemBuilder: (context, index) {
-                          return AddressItemChoice(
-                              getAddress[index], index + 1);
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(height: 10);
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 6),
-                    GestureDetector(
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (builder) => AddAddressScreen(),
-                          ),
-                        ).then((onValue) {
-                          if (onValue == 'reload') {
-                            GetData();
-                            setState(() {});
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        color: Theme.of(context).colorScheme.background,
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_circle_outline,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 26,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                "Add new address",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
+              });
             }
-            return Container();
-          },
-        ),
-        bottomNavigationBar: IntrinsicHeight(
-          child: Container(
-            padding: EdgeInsets.all(10),
-            color: Theme.of(context).colorScheme.onPrimaryFixed,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryFixed,
-                  borderRadius: BorderRadius.circular(12)),
+            return Container(
               child: Center(
-                child: Text(
-                  "ACCEPT",
-                  style: GoogleFonts.manrope(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimaryFixed,
+                child: Text("Error"),
+              ),
+            );
+          }
+          List<Address>? getAddress = snapshot.data;
+          if (getAddress == null) {
+            return Container(
+              child: Center(
+                child: Text("Address not found"),
+              ),
+            );
+          }
+          return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            appBar: CustomAppBar(
+              context: context,
+              title: "Choose address",
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back),
+              ),
+              centerTitle: false,
+            ),
+            body: Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Text(
+                      "Address",
+                      style: GoogleFonts.manrope(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    color: Theme.of(context).colorScheme.background,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemCount: getAddress.length,
+                      itemBuilder: (context, index) {
+                        return AddressItemChoice(getAddress[index], index + 1);
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SizedBox(height: 10);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) => AddAddressScreen(),
+                        ),
+                      ).then((onValue) {
+                        if (onValue == 'reload') {
+                          GetData();
+                          setState(() {});
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      color: Theme.of(context).colorScheme.background,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_circle_outline,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 26,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              "Add new address",
+                              style: GoogleFonts.manrope(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            bottomNavigationBar: IntrinsicHeight(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context, getAddress[_selectedOption-1]);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryFixed,
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Center(
+                      child: Text(
+                        "ACCEPT",
+                        style: GoogleFonts.manrope(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimaryFixed,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -295,11 +295,13 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             GestureDetector(
               onTap: () async {
                 await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (builder) => AddAddressScreen(
-                              address: address,
-                            ))).then((onValue) {
+                  context,
+                  MaterialPageRoute(
+                    builder: (builder) => AddAddressScreen(
+                      address: address,
+                    ),
+                  ),
+                ).then((onValue) {
                   if (onValue == 'reload') {
                     GetData();
                     setState(() {});
@@ -338,49 +340,118 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                               width: 1),
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Stack(
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              text: address.receiverName,
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                          Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextSpan(
-                                  text: "   |   ",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.5),
+                                RichText(
+                                  text: TextSpan(
+                                    text: address.receiverName,
+                                    style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "   |   ",
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: address.receiverPhone,
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.5),
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                                TextSpan(
-                                  text: address.receiverPhone,
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.5),
-                                  ),
-                                )
+                                Text(address.street),
+                                Text(
+                                  "${address.ward}, ${address.district}, ${address.city}",
+                                  maxLines: 2,
+                                  softWrap: true,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
-                          Text(address.street),
-                          Text(
-                            "${address.ward}, ${address.district}, ${address.city}",
-                            maxLines: 2,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: (!address.isDefault)
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      try {
+                                        bool check = await SetDefaultAddress(
+                                            address.id!);
+                                        if (check) {
+                                          SuccessToast(
+                                            context: context,
+                                            message: "Set as default success",
+                                          ).ShowToast();
+                                        } else {
+                                          WarningToast(
+                                            context: context,
+                                            message: "Set as default failed",
+                                          ).ShowToast();
+                                        }
+                                      } on TimeoutException catch (e) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          NotifyToast(
+                                            context: context,
+                                            message: e.message!,
+                                          ).ShowToast();
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SignInScreen()),
+                                            (route) => false,
+                                          );
+                                        });
+                                      } catch (e) {
+                                        WarningToast(
+                                          context: context,
+                                          message: e.toString(),
+                                        ).ShowToast();
+                                      }
+                                      GetData();
+                                      setState(() {});
+                                    },
+                                    child: Text(
+                                      "Set as default",
+                                      style: GoogleFonts.manrope(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                          fontSize: 14),
+                                    ),
+                                  )
+                                : Text(
+                                    "Default",
+                                    style: GoogleFonts.roboto(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryFixed,
+                                        fontSize: 14),
+                                  ),
+                          )
                         ],
                       ),
                     ),

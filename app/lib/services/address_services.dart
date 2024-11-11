@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:ecommerce_shop/models/address.dart';
 import 'package:ecommerce_shop/services/auth_services.dart';
@@ -211,6 +210,116 @@ Future<bool> DeleteAddress(int idAddress) async {
                   },
                 ));
             return true;
+          } on DioError catch (e) {
+            if (e.response!.statusCode == 401) {
+              throw TimeoutException("Login time out");
+            } else {
+              throw Exception(e.response!.data);
+            }
+          }
+        } else {
+          throw TimeoutException("Login time out");
+        }
+      } else {
+        throw Exception("Failed when get data");
+      }
+    }
+  }
+}
+
+Future<bool> SetDefaultAddress(int id) async {
+  final url = 'https://10.0.2.2:7277/api/Address/SetDefaultAddress/${id}';
+  String? token = await GetToken();
+  Dio _dio = Dio();
+  if (token == null) {
+    throw TimeoutException("Sign in time out");
+  } else {
+    try {
+      await _dio.put(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          },
+        ),
+      );
+      return true;
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 401) {
+        bool check = await RequestNewToken();
+        if (check) {
+          token = await GetToken();
+          if (token == null) {
+            throw TimeoutException("Sign in time out");
+          }
+          try {
+            await _dio.put(
+              url,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json'
+                },
+              ),
+            );
+            return true;
+          } on DioError catch (e) {
+            if (e.response!.statusCode == 401) {
+              throw TimeoutException("Login time out");
+            } else {
+              throw Exception(e.response!.data);
+            }
+          }
+        } else {
+          throw TimeoutException("Login time out");
+        }
+      } else {
+        throw Exception("Failed when get data");
+      }
+    }
+  }
+}
+
+Future<Address?> GetDefaultAddress() async {
+  final url = 'https://10.0.2.2:7277/api/Address/GetDefaultAddress';
+  String? token = await GetToken();
+  Dio _dio = Dio();
+  if (token == null) {
+    throw TimeoutException("Sign in time out");
+  } else {
+    try {
+      var response = await _dio.get(
+        url,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json'
+          },
+        ),
+      );
+      Address? getAddress = Address.fromMap(response.data);
+      return getAddress;
+    } on DioError catch (e) {
+      if (e.response!.statusCode == 401) {
+        bool check = await RequestNewToken();
+        if (check) {
+          token = await GetToken();
+          if (token == null) {
+            throw TimeoutException("Sign in time out");
+          }
+          try {
+            var response = await _dio.get(
+              url,
+              options: Options(
+                headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json'
+                },
+              ),
+            );
+            Address? getAddress = Address.fromMap(response.data);
+            return getAddress;
           } on DioError catch (e) {
             if (e.response!.statusCode == 401) {
               throw TimeoutException("Login time out");

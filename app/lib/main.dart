@@ -1,12 +1,15 @@
 // ignore_for_file: unused_import
 import 'dart:io';
 import 'package:ecommerce_shop/firebase_options.dart';
+import 'package:ecommerce_shop/models/cart.dart';
+import 'package:ecommerce_shop/models/product.dart';
 import 'package:ecommerce_shop/screens/add_address_screen.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
 import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
+import 'package:ecommerce_shop/screens/order_screen.dart';
 import 'package:ecommerce_shop/screens/payment_method_screen.dart';
 import 'package:ecommerce_shop/screens/product_detail_screen.dart';
 import 'package:ecommerce_shop/screens/profile_screen.dart';
@@ -40,7 +43,12 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyDznM1m62LdnnVIGLQcF5YPu64nuSJHN6M",
+      appId: "1:145730313552:android:55ea23695f29b29901a055",
+      messagingSenderId: "145730313552",
+      projectId: "shopoes-2e0b8",
+    ),
   );
   HttpOverrides.global = MyHttpOverrides();
   runApp(
@@ -58,6 +66,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
       return MaterialApp(
+        // home: OrderScreen(
+        //   listCarts: [
+        //     new Cart(
+        //         id: 1,
+        //         idProductVarientNavigation: new ProductVarient(
+        //             id: 1, idProduct: 1, size: 34, isValid: true),
+        //         quantity: 1)
+        //   ],
+        // ),
         home: NavigationScreen(),
         theme: lightMode,
       );
