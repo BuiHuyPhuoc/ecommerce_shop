@@ -246,7 +246,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (result) {
         SuccessToast(
           context: context,
-          message: "Đăng nhập thành công",
+          message: "Login success",
         ).ShowToast();
         Navigator.pushAndRemoveUntil(
             context,
@@ -255,7 +255,7 @@ class _SignInScreenState extends State<SignInScreen> {
       } else {
         WarningToast(
           context: context,
-          message: "Sai thông tin đăng nhập",
+          message: "Wrong information",
         ).ShowToast();
         return;
       }
