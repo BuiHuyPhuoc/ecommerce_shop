@@ -652,4 +652,3 @@ USE [master]
 GO
 ALTER DATABASE [ShopoesDB] SET  READ_WRITE 
 GO
-

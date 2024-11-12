@@ -7,7 +7,6 @@ import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 

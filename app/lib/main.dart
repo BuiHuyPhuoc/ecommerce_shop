@@ -9,6 +9,7 @@ import 'package:ecommerce_shop/screens/custom_card.dart';
 import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
+import 'package:ecommerce_shop/screens/order_history_screen.dart';
 import 'package:ecommerce_shop/screens/order_screen.dart';
 import 'package:ecommerce_shop/screens/payment_method_screen.dart';
 import 'package:ecommerce_shop/screens/product_detail_screen.dart';
@@ -75,7 +76,7 @@ class MyApp extends StatelessWidget {
         //         quantity: 1)
         //   ],
         // ),
-        home: NavigationScreen(),
+        home: OrderHistoryScreen(),
         theme: lightMode,
       );
     });

@@ -110,8 +110,11 @@ namespace ShopoesAPI.Controllers
             {
                 return Unauthorized("User not found");
             }
-            var dbOrders = await _context.Orders.Include(x => x.OrderDetails).Where(x => x.IdCustomer == dbCustomer.Id).ToListAsync();
+            var dbOrders = await _context.Orders
+                            .Include(x => x.IdAddressNavigation)
+                            .Where(x => x.IdCustomer == dbCustomer.Id).OrderByDescending(x => x.Date)
+                            .ToListAsync(); 
             return Ok(dbOrders);
         }
-    }
+    }    
 }
