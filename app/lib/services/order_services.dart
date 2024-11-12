@@ -79,6 +79,10 @@ Future<List<Order>> GetOrder() async {
         bool check = await RequestNewToken();
         if (check) {
           token = await GetToken();
+          _options = Options(headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          });
           try {
             var response = await _dio.get(
               url,
