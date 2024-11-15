@@ -116,5 +116,26 @@ namespace ShopoesAPI.Controllers
                             .ToListAsync(); 
             return Ok(dbOrders);
         }
+
+        [HttpGet]
+        [Route("GetOrderDetail")]
+        [Authorize]
+        public async Task<ActionResult<Order>> GetOrderDetail(int id)
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = _context.Customers.Where(x => x.Account!.Email == emailClaim).AsNoTracking().FirstOrDefault();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            var dbOrders = await _context.Orders
+                            .Include(x => x.IdAddressNavigation)
+                            .Include(x => x.OrderDetails)
+                            .Where(x => x.IdCustomer == dbCustomer.Id && x.Id == id)
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync();
+            return Ok(dbOrders);
+        }
+
     }    
 }

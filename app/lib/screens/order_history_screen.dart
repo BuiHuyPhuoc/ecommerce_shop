@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ecommerce_shop/models/order.dart';
+import 'package:ecommerce_shop/screens/order_detail_screen.dart';
 import 'package:ecommerce_shop/screens/signin_screen.dart';
 import 'package:ecommerce_shop/services/order_services.dart';
 import 'package:ecommerce_shop/widgets/custom_app_bar.dart';
@@ -201,7 +202,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     SizedBox(width: 5),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (builder) =>
+                                  OrderDetailScreen(idOrder: order.id),
+                            ),
+                          );
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           decoration: BoxDecoration(
@@ -221,6 +230,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             child: Text(
                               "View ticket",
                               style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.bold,
                                 fontSize: 14,
                                 color: Theme.of(context)
                                     .colorScheme

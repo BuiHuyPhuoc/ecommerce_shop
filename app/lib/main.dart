@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
         //         quantity: 1)
         //   ],
         // ),
-        home: OrderHistoryScreen(),
+        home: NavigationScreen(),
         theme: lightMode,
       );
     });
