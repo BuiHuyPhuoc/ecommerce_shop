@@ -131,6 +131,11 @@ namespace ShopoesAPI.Controllers
             var dbOrders = await _context.Orders
                             .Include(x => x.IdAddressNavigation)
                             .Include(x => x.OrderDetails)
+                            .ThenInclude(y => y.IdProductNavigation)
+                            .ThenInclude(z => z.IdBrandNavigation)
+                            .Include(x => x.OrderDetails)
+                            .ThenInclude(y => y.IdProductNavigation)
+                            .ThenInclude(z => z.IdCategoryNavigation)
                             .Where(x => x.IdCustomer == dbCustomer.Id && x.Id == id)
                             .AsNoTracking()
                             .FirstOrDefaultAsync();

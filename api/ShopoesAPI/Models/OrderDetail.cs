@@ -22,6 +22,5 @@ public partial class OrderDetail
     public int Quantity { get; set; }
     [JsonIgnore]
     public virtual Order IdOrderNavigation { get => idOrderNavigation; set => idOrderNavigation = value; }
-    [JsonIgnore]
     public virtual Product IdProductNavigation { get; set; } = null!;
 }

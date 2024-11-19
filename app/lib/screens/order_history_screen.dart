@@ -87,13 +87,16 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               body: Container(
                 padding: EdgeInsets.all(20),
                 child: ListView.separated(
-                    itemBuilder: (context, index) {
-                      return ItemHistoryOrder(_orders[index]);
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 10);
-                    },
-                    itemCount: _orders.length),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return ItemHistoryOrder(_orders[index]);
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 10);
+                  },
+                  itemCount: _orders.length,
+                ),
               ),
             );
           } else {
