@@ -5,6 +5,7 @@ import 'package:ecommerce_shop/models/cart.dart';
 import 'package:ecommerce_shop/models/product.dart';
 import 'package:ecommerce_shop/screens/add_address_screen.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
+import 'package:ecommerce_shop/screens/change_theme_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
 import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
@@ -52,12 +53,7 @@ void main() async {
     ),
   );
   HttpOverrides.global = MyHttpOverrides();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -65,21 +61,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(builder: (context, ThemeProvider, child) {
-      return MaterialApp(
-        // home: OrderScreen(
-        //   listCarts: [
-        //     new Cart(
-        //         id: 1,
-        //         idProductVarientNavigation: new ProductVarient(
-        //             id: 1, idProduct: 1, size: 34, isValid: true),
-        //         quantity: 1)
-        //   ],
-        // ),
-        home: NavigationScreen(),
-        theme: lightMode,
-      );
-    });
-    // abc
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+        ),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, ThemeProvider, child) {
+          return MaterialApp(
+            home: NavigationScreen(),
+            theme: ThemeProvider.themeData,
+          );
+        },
+      ),
+    );
   }
 }

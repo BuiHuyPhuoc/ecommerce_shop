@@ -52,7 +52,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           } else {
             return SafeArea(
               child: Scaffold(
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.background,
                 appBar: CustomAppBar(
                   leading: IconButton(
                     onPressed: () {
@@ -93,8 +93,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     child: Text(
                                       getProduct.idCategoryNavigation.name,
                                       style: GoogleFonts.manrope(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54),
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.8),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: 5),
@@ -118,23 +122,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                                 style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 10),
                               Text(
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                                 getProduct.description,
                                 style: GoogleFonts.manrope(
-                                    fontSize: 16, color: Colors.black54),
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.8),
+                                ),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 10),
                               Text(
                                 "Size",
                                 style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Colors.black),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                               SizedBox(height: 10),
                               Container(
@@ -176,9 +189,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                   .productVarients[index].size
                                                   .toString(),
                                               style: GoogleFonts.manrope(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -205,7 +221,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.background,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -258,8 +274,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                border:
-                                    Border.all(color: Colors.black26, width: 1),
+                                border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                    width: 1),
                               ),
                               child: Row(
                                 children: [
@@ -274,7 +292,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           horizontal: 6, vertical: 0),
                                       icon: Icon(
                                         Icons.remove,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     ),
                                   ),
@@ -283,7 +303,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         EdgeInsets.symmetric(horizontal: 6),
                                     child: Text(
                                       quantity.toString(),
-                                      style: GoogleFonts.roboto(fontSize: 16),
+                                      style: GoogleFonts.roboto(
+                                          fontSize: 16,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                     ),
                                   ),
                                   Container(
@@ -297,7 +321,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                           horizontal: 6, vertical: 0),
                                       icon: Icon(
                                         Icons.add,
-                                        color: Colors.black,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     ),
                                   ),
@@ -309,7 +335,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         SizedBox(height: 10),
                         GestureDetector(
                           onTap: () async {
-                            if (quantity == 0 ) {
+                            if (quantity == 0) {
                               NotifyToast(
                                 context: context,
                                 message: "Please pick at least 1 quantity",
@@ -360,9 +386,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               child: Text(
                                 "Add to cart",
                                 style: GoogleFonts.manrope(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
                             ),
                           ),

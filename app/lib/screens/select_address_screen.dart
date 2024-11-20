@@ -74,7 +74,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
             );
           }
           return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: Theme.of(context).colorScheme.background,
             appBar: CustomAppBar(
               context: context,
               title: "Choose address",
@@ -169,7 +169,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
-                  color: Theme.of(context).colorScheme.onPrimaryFixed,
+                  color: Theme.of(context).colorScheme.surface,
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
@@ -448,7 +448,7 @@ class _SelectAddressScreenState extends State<SelectAddressScreen> {
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .primaryFixed,
+                                            .primary,
                                         fontSize: 14),
                                   ),
                           )
