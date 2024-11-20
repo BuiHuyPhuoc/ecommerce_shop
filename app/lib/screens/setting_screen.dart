@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'package:ecommerce_shop/models/customerDTO.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
+import 'package:ecommerce_shop/screens/order_history_screen.dart';
 import 'package:ecommerce_shop/screens/profile_screen.dart';
 import 'package:ecommerce_shop/screens/select_address_screen.dart';
 import 'package:ecommerce_shop/services/auth_services.dart';
@@ -166,6 +167,18 @@ class _SettingScreenState extends State<SettingScreen> {
                       context: context,
                       title: "Address",
                       icons: Icons.place_outlined),
+                  SettingItem(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (builder) => OrderHistoryScreen(),
+                          ),
+                        );
+                      },
+                      context: context,
+                      title: "Order history",
+                      icons: Icons.shopping_bag_outlined),
                   SettingItem(
                       context: context,
                       title: "Change theme",
