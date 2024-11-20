@@ -241,7 +241,7 @@ class _OrderScreenState extends State<OrderScreen> {
               children: [
                 Icon(
                   Icons.location_on,
-                  color: Theme.of(context).colorScheme.primaryFixed,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 30,
                 ),
                 Column(
@@ -253,6 +253,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       style: GoogleFonts.manrope(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],
@@ -279,21 +280,21 @@ class _OrderScreenState extends State<OrderScreen> {
                             _getAddress!.receiverPhone,
                         style: GoogleFonts.roboto(
                           fontSize: 14,
-                          color: Theme.of(context).colorScheme.primaryFixed,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       Text(
                         _getAddress!.street,
                         style: GoogleFonts.roboto(
                           fontSize: 14,
-                          color: Theme.of(context).colorScheme.primaryFixed,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       Text(
                         "${_getAddress!.ward}, ${_getAddress!.district}, ${_getAddress!.city}",
                         style: GoogleFonts.roboto(
                           fontSize: 14,
-                          color: Theme.of(context).colorScheme.primaryFixed,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       )
                     ],
@@ -423,7 +424,7 @@ Widget OrderItem(BuildContext context, Cart cart) {
                         style: GoogleFonts.manrope(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Theme.of(context).colorScheme.primaryFixed,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         children: <TextSpan>[
                           TextSpan(
@@ -431,7 +432,7 @@ Widget OrderItem(BuildContext context, Cart cart) {
                             style: TextStyle(
                                 fontSize: 14,
                                 color:
-                                    Theme.of(context).colorScheme.primaryFixed),
+                                    Theme.of(context).colorScheme.primary),
                           ),
                         ],
                       ),

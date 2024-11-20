@@ -87,8 +87,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               body: Container(
                 padding: EdgeInsets.all(20),
                 child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     return ItemHistoryOrder(_orders[index]);
                   },
@@ -262,12 +260,16 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         children: [
           Text(
             "$label: ",
-            style: GoogleFonts.roboto(fontSize: 16),
+            style: GoogleFonts.roboto(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           Text(
             content,
             style: GoogleFonts.lexendDeca(
               fontSize: 16,
+              color: Theme.of(context).colorScheme.primary,
             ),
           )
         ],
