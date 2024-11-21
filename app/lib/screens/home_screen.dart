@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/customerDTO.dart';
@@ -20,6 +21,11 @@ class _HomeScreenState extends State<HomeScreen> {
   late List<Product> product;
   late List<Product> saleProduct;
   bool isLoading = true;
+  List<String> _banners = [
+    "assets/images/puma_banner.png",
+    "assets/images/adidas_banner.png",
+    "assets/images/nike_banner.png",
+  ];
 
   Future<void> GetData() async {
     product = await GetProduct();
@@ -56,69 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    HomePageAppBar(context),
+                    SafeArea(
+                      child: HomePageAppBar(context),
+                    ),
                     SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      height: 60,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 11,
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.only(top: 12, left: 25),
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  hintText: "Find your favorites shoes",
-                                  hintStyle: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.5)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            height: 60,
-                            child: AspectRatio(
-                              aspectRatio: 1 / 1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primaryFixed),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.filter_alt,
-                                    color: Color(0xffA3FFD6),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    CarouselSliderBanner(),
                     SizedBox(height: 10),
                     HomePageHeading(context: context, title: "Giảm giá sâu"),
                     SizedBox(
@@ -251,6 +201,30 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget CarouselSliderBanner() {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 200.0,
+        viewportFraction: 1,
+        autoPlay: true,
+        autoPlayInterval: Duration(seconds: 2),
+      ),
+      items: _banners.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  image:
+                      DecorationImage(image: AssetImage(i), fit: BoxFit.fill),
+                  borderRadius: BorderRadius.circular(10)),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }

@@ -8,15 +8,15 @@ import 'package:ecommerce_shop/services/brand_services.dart';
 import 'package:ecommerce_shop/services/category_services.dart';
 import 'package:ecommerce_shop/services/product_services.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
-import 'package:ecommerce_shop/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class SearchScreen extends StatefulWidget {
-  SearchScreen({super.key, required this.customerDTO});
+  SearchScreen({super.key, required this.customerDTO, this.isFocus = false});
 
   CustomerDTO customerDTO;
+  bool isFocus;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -98,6 +98,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: TextField(
+                                  autofocus: true,
                                   controller: searchController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.only(left: 25),
