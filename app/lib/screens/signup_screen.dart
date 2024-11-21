@@ -1,7 +1,7 @@
-import 'package:ecommerce_shop/models/api_respond.dart';
 import 'package:ecommerce_shop/models/register_customer.dart';
 import 'package:ecommerce_shop/screens/send_email_screen.dart';
 import 'package:ecommerce_shop/screens/signin_screen.dart';
+import 'package:ecommerce_shop/services/api_services.dart';
 import 'package:ecommerce_shop/services/auth_services.dart';
 import 'package:ecommerce_shop/widgets/custom_toast.dart';
 import 'package:ecommerce_shop/widgets/loading_dialog.dart';
