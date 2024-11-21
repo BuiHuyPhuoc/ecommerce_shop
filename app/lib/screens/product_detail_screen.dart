@@ -208,6 +208,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     );
                                   },
                                 ),
+                              ),
+                              Text(
+                                "Review",
+                                style: GoogleFonts.manrope(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: [],
+                                ),
                               )
                             ],
                           ),
