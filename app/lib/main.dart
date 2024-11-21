@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, ThemeProvider, child) {
           return MaterialApp(
-            home: NavigationScreen(),
+            home: NavigationScreen(pageNumber: 0,),
             theme: ThemeProvider.themeData,
           );
         },
