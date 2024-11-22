@@ -49,11 +49,13 @@ namespace ShopoesAPI.Controllers
                 .Include(x => x.Reviews)
                 .ThenInclude(y => y.IdCustomerNavigation)
                 .FirstOrDefaultAsync(x => x.Id == id);
+            var dbReview = _context.Reviews.Where(x => x.IdProduct == dbProduct!.Id).AsNoTracking().Average(x => x.Rating);
+            
             if (dbProduct == null)
             {
                 return Conflict("Product with this id not found");
             }
-            return Ok(dbProduct);
+            return Ok(new { dbProduct , rate = dbReview});
         }
 
         [HttpGet]
