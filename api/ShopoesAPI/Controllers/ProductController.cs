@@ -41,8 +41,14 @@ namespace ShopoesAPI.Controllers
         [Route("GetProductById")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation)
-                .Include(x => x.IdBrandNavigation).Include(x => x.ProductVarients).Include(x => x.ProductImages).FirstOrDefaultAsync(x => x.Id == id);
+            var dbProduct = await _context.Products
+                .Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation)
+                .Include(x => x.ProductVarients)
+                .Include(x => x.ProductImages)
+                .Include(x => x.Reviews)
+                .ThenInclude(y => y.IdCustomerNavigation)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (dbProduct == null)
             {
                 return Conflict("Product with this id not found");
