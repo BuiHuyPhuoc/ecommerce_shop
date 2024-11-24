@@ -23,8 +23,13 @@ namespace ShopoesAPI.Controllers
         [Route("GetAllProduct")]
         public async Task<ActionResult<List<Product>>> GetAllProduct()
         {
-            var dbProducts = await _context.Products.Include(x => x.IdCategoryNavigation)
-                .Include(x => x.IdBrandNavigation).Where(x => x.IsValid == true).OrderByDescending(x => x.NameProduct).Take(10).ToListAsync();
+            var dbProducts = await _context.Products
+                            .Include(x => x.IdCategoryNavigation)
+                            .Include(x => x.IdBrandNavigation)
+                            .Include(x => x.Reviews)
+                            .ThenInclude(y => y.IdCustomerNavigation)
+                            .Where(x => x.IsValid == true)
+                            .OrderByDescending(x => x.NameProduct).Take(10).ToListAsync();
             return Ok(dbProducts);
         }
 
@@ -32,8 +37,11 @@ namespace ShopoesAPI.Controllers
         [Route("GetProductByName")]
         public async Task<ActionResult<List<Product>>> GetProductByName(string name)
         {
-            var results = await _context.Products.Include(x => x.IdCategoryNavigation)
-                .Include(x => x.IdBrandNavigation).Where(x => EF.Functions.Like(x.NameProduct, $"%{name}%") && x.IsValid == true).ToListAsync();
+            var results = await _context.Products
+                .Include(x => x.IdCategoryNavigation)
+                .Include(x => x.IdBrandNavigation)
+                .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
+                .Where(x => EF.Functions.Like(x.NameProduct, $"%{name}%") && x.IsValid == true).ToListAsync();
             return Ok(results);
         }
 
@@ -46,8 +54,7 @@ namespace ShopoesAPI.Controllers
                 .Include(x => x.IdBrandNavigation)
                 .Include(x => x.ProductVarients)
                 .Include(x => x.ProductImages)
-                .Include(x => x.Reviews)
-                .ThenInclude(y => y.IdCustomerNavigation)
+                .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
                 .FirstOrDefaultAsync(x => x.Id == id);
             var dbReview = _context.Reviews.Where(x => x.IdProduct == dbProduct!.Id).AsNoTracking().Average(x => x.Rating);
             
@@ -55,7 +62,7 @@ namespace ShopoesAPI.Controllers
             {
                 return Conflict("Product with this id not found");
             }
-            return Ok(new { dbProduct , rate = dbReview});
+            return Ok(dbProduct);
         }
 
         [HttpGet]
@@ -65,8 +72,16 @@ namespace ShopoesAPI.Controllers
             var dbProduct = await _context.Products
                                    .Include(x => x.IdCategoryNavigation)
                                    .Include(x => x.IdBrandNavigation)
+                                   .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
                                    .Where(x => x.IdCategory == idCateogry && x.IsValid == true)
                                    .ToListAsync();
+            // Sắp xếp Reviews theo Date
+            dbProduct.ForEach(product =>
+            {
+                product.Reviews = product.Reviews
+                    .OrderByDescending(r => r.Date) // Sắp xếp giảm dần theo ngày
+                    .ToList();
+            });
             return Ok(dbProduct);
         }
 
@@ -74,7 +89,7 @@ namespace ShopoesAPI.Controllers
         [Route("GetProductByBrand")]
         public async Task<ActionResult<List<Product>>> GetProductByBrand(int idBrand)
         {
-            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).Where(x => x.IdBrand == idBrand && x.IsValid == true).ToListAsync();
+            var dbProduct = await _context.Products.Include(x => x.IdCategoryNavigation).Include(x => x.IdBrandNavigation).Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation).Where(x => x.IdBrand == idBrand && x.IsValid == true).ToListAsync();
             return Ok(dbProduct);
         }
 
@@ -85,7 +100,9 @@ namespace ShopoesAPI.Controllers
             var dbProduct = await _context.Products
                 .Include(x => x.IdCategoryNavigation)
                 .Include(x => x.IdBrandNavigation)
+                .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
                 .Where(x => x.IsValid == true && x.PriceProduct != x.NewPrice)
+                .AsNoTracking()
                 .ToListAsync();
             return Ok(dbProduct);
         }
@@ -96,6 +113,7 @@ namespace ShopoesAPI.Controllers
             var products = _context.Products
                 .Include(x => x.IdCategoryNavigation)
                 .Include(x => x.IdBrandNavigation)
+                .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
                 .Where(x => x.IsValid == true)
                 .AsQueryable();
 

@@ -314,7 +314,7 @@ Widget ItemCard({required BuildContext context, required Product product}) {
                   ),
                   SizedBox(width: 2),
                   Text(
-                    "4.2",
+                    GetAverageRating(product.reviews).toStringAsFixed(1),
                     style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.primary,
