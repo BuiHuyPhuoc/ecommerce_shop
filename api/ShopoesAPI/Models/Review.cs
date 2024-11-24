@@ -18,4 +18,5 @@ public partial class Review
 
     public DateTime Date { get; set; }
     public virtual Customer IdCustomerNavigation { get; set; } = null!;
+    public virtual Product IdProductNavigation { get; set; } = null!;
 }

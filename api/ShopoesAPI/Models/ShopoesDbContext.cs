@@ -212,6 +212,10 @@ public partial class ShopoesDbContext : DbContext
                 .HasForeignKey(d => d.IdCustomer)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Reviews__IdCusto__412EB0B6");
+
+            entity.HasOne(d => d.IdProductNavigation).WithMany(p => p.Reviews)
+                .HasForeignKey(d => d.IdProduct)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Role>(entity =>

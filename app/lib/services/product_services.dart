@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ecommerce_shop/models/product.dart';
+import 'package:ecommerce_shop/models/review.dart';
 import 'package:ecommerce_shop/services/api_services.dart';
 
 Future<List<Product>> GetProduct() async {
@@ -92,4 +93,15 @@ Future<List<Product>> FilterProduct(
   } catch (e) {
     throw Exception('Failed to load products');
   }
+}
+
+double GetAverageRating(List<Review> reviews) {
+  if (reviews.length == 0) {
+    return 0;
+  }
+  int sumRating = 0;
+  for(var item in reviews) {
+    sumRating += item.rating;
+  }
+  return sumRating / reviews.length;
 }
