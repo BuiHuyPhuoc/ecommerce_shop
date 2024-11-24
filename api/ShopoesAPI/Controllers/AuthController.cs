@@ -71,7 +71,7 @@ namespace ShopoesAPI.Controllers
                 {
                     string password = customerDTO.Password;
                     //Regex regex = new Regex("[~`!@#$%^&*()\\-_=+\\\\|\\[{\\]};:'\",<.>/?]");
-                    
+
                     // Kiểm tra format số điện thoại
                     if (!StringFormat.IsDigitsOnly(customerDTO.Phone))
                     {
@@ -92,7 +92,7 @@ namespace ShopoesAPI.Controllers
                     {
                         return BadRequest("Password is not in correct format.");
                     }
-                    
+
                     if (customerDTO.Password != customerDTO.ConfirmPassword)
                     {
                         return BadRequest("Incorrect confirm password");
@@ -174,10 +174,14 @@ namespace ShopoesAPI.Controllers
                 return BadRequest();
             }
 
-            if (string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password)) {
+            if (string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
+            {
                 return BadRequest("Please input field");
             }
-            var dbAccount = await _context.Accounts.Include(x => x.IdNavigation).Where(x => x.Email == loginRequest.Email).FirstOrDefaultAsync();
+            var dbAccount = await _context.Accounts
+                            .Include(x => x.IdNavigation).ThenInclude(y => y.IdRoleNavigation)
+                            .Where(x => x.Email == loginRequest.Email)
+                            .FirstOrDefaultAsync();
             if (dbAccount is null)
             {
                 return BadRequest("User not found.");
@@ -214,7 +218,8 @@ namespace ShopoesAPI.Controllers
                 return Ok(new
                 {
                     Token = jwtToken,
-                    RefreshToken = refreshToken.Token
+                    RefreshToken = refreshToken.Token,
+                    Role = dbAccount.IdNavigation.IdRoleNavigation.Id,
                 });
             }
         }
@@ -318,7 +323,8 @@ namespace ShopoesAPI.Controllers
             if (dbRefreshToken == null)
             {
                 return BadRequest("Invalid Refresh Token.");
-            } else
+            }
+            else
             {
                 if (dbRefreshToken.Expires < DateTime.Now || !(dbRefreshToken.Revoked == null))
                 {
@@ -328,7 +334,7 @@ namespace ShopoesAPI.Controllers
                 }
                 var newJwtToken = CreateToken(dbRefreshToken.Account.IdNavigation, dbRefreshToken.Account.Email);
                 //var newRefreshToken = GenerateRefreshToken();
-                return Ok(new { Token = newJwtToken});
+                return Ok(new { Token = newJwtToken });
             }
         }
 
@@ -336,10 +342,12 @@ namespace ShopoesAPI.Controllers
         public async Task<IActionResult> DeleteCustomer(string email)
         {
             var dbAccount = await _context.Accounts.FirstOrDefaultAsync(x => x.Email == email);
-            
-            if (dbAccount == null) return BadRequest("Invalid customer email");
+
+            if (dbAccount == null)
+                return BadRequest("Invalid customer email");
             var dbCustomer = _context.Customers.Find(dbAccount.IdCustomer);
-            if (dbCustomer == null) return BadRequest("Invalid customer email");
+            if (dbCustomer == null)
+                return BadRequest("Invalid customer email");
             _context.Remove(dbAccount);
             _context.Remove(dbCustomer);
             await _context.SaveChangesAsync();

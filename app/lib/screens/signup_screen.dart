@@ -438,7 +438,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             );
                           },
                           child: Text(
-                            "Đăng nhập",
+                            "Sign in",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.onSurface,
@@ -460,7 +460,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         SizedBox(width: 10),
                         Text(
-                          "Đăng nhập với",
+                          "Sign in with",
                           style: GoogleFonts.manrope(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.primary),
@@ -475,8 +475,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ],
                     ),
                     const SizedBox(height: 20.0),
-                    // already have an account
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

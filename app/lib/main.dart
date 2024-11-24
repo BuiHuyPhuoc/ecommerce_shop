@@ -4,6 +4,7 @@ import 'package:ecommerce_shop/firebase_options.dart';
 import 'package:ecommerce_shop/models/cart.dart';
 import 'package:ecommerce_shop/models/product.dart';
 import 'package:ecommerce_shop/screens/add_address_screen.dart';
+import 'package:ecommerce_shop/screens/admin/admin_dashboard_screen.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/change_theme_screen.dart';
 import 'package:ecommerce_shop/screens/custom_card.dart';
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, ThemeProvider, child) {
           return MaterialApp(
-            home: NavigationScreen(pageNumber: 0,),
+            home: NavigationScreen(),
             theme: ThemeProvider.themeData,
           );
         },

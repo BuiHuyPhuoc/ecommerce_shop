@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:ecommerce_shop/models/ChangePasswordRequest.dart';
 import 'package:ecommerce_shop/models/register_customer.dart';
+import 'package:ecommerce_shop/models/sign_in_reponse.dart';
 import 'package:ecommerce_shop/screens/signin_screen.dart';
 import 'package:ecommerce_shop/services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<bool> LoginWithEmailAndPassword(String email, String password) async {
+Future<SignInReponse> LoginWithEmailAndPassword(
+    String email, String password) async {
   // Gọi api đăng nhập
   final url = 'https://10.0.2.2:7277/api/Auth/Login';
   final Dio _dio = Dio();
@@ -23,17 +25,30 @@ Future<bool> LoginWithEmailAndPassword(String email, String password) async {
       String jwtToken = jsonEncode(respond.data['token']).replaceAll("\"", "");
       String jwtRefreshToken =
           jsonEncode(respond.data['refreshToken']).replaceAll("\"", "");
-
+      int role = respond.data['role'] as int;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', jwtToken);
       await prefs.setString('refreshToken', jwtRefreshToken);
-      return true;
+
+      return SignInReponse(
+        idRole: role,
+        status: true,
+        message: "Login success",
+      );
     } else {
-      return false;
+      return SignInReponse(
+        idRole: 0,
+        status: false,
+        message: "Login failed",
+      );
     }
   } on DioError catch (e) {
     print(e.message);
-    return false;
+    return SignInReponse(
+      idRole: 0,
+      status: false,
+      message: "Error when sign in",
+    );
   }
 }
 

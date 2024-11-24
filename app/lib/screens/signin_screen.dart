@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:ecommerce_shop/models/sign_in_reponse.dart';
+import 'package:ecommerce_shop/screens/admin/admin_dashboard_screen.dart';
 import 'package:ecommerce_shop/screens/forgot_password_screen.dart';
 import 'package:ecommerce_shop/screens/navigation_screen.dart';
 import 'package:ecommerce_shop/screens/signup_screen.dart';
@@ -241,17 +243,24 @@ class _SignInScreenState extends State<SignInScreen> {
       return;
     } else {
       LoadingDialog(context);
-      bool result = await LoginWithEmailAndPassword(_email, _password);
+      SignInReponse result = await LoginWithEmailAndPassword(_email, _password);
       Navigator.pop(context);
-      if (result) {
+      if (result.status) {
         SuccessToast(
           context: context,
           message: "Login success",
         ).ShowToast();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (builder) => NavigationScreen()),
-            (Route<dynamic> route) => false);
+        if (result.idRole == 2) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (builder) => AdminDashboardScreen()),
+              (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (builder) => NavigationScreen()),
+              (Route<dynamic> route) => false);
+        }
       } else {
         WarningToast(
           context: context,
