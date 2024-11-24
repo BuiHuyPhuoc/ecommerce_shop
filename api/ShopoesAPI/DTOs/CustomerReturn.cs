@@ -6,6 +6,7 @@
         public string Name { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string NameRole { get; set; } = string.Empty;
+        public int IdRole { get; set; }
         public string? AvatarImageUrl { get; set; }
     }
 }

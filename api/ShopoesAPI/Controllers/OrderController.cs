@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.JSInterop.Infrastructure;
 using ShopoesAPI.DTOs;
 using ShopoesAPI.Models;
 using System.Security.Claims;
@@ -118,6 +119,26 @@ namespace ShopoesAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllOrder")]
+        [Authorize(Roles = "2")]
+        public async Task<ActionResult<Order>> GetAllOrder()
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = _context.Customers.Where(x => x.Account!.Email == emailClaim).FirstOrDefault();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            var dbOrders = await _context.Orders
+                            .Include(x => x.IdAddressNavigation)
+                            .OrderByDescending(x => x.Date)
+                            .ToListAsync();
+            return Ok(dbOrders);
+        }
+
+
+
+        [HttpGet]
         [Route("GetOrderDetail")]
         [Authorize]
         public async Task<ActionResult<Order>> GetOrderDetail(int id)
@@ -136,11 +157,73 @@ namespace ShopoesAPI.Controllers
                             .Include(x => x.OrderDetails)
                             .ThenInclude(y => y.IdProductNavigation)
                             .ThenInclude(z => z.IdCategoryNavigation)
-                            .Where(x => x.IdCustomer == dbCustomer.Id && x.Id == id)
+                            .Where(x => x.Id == id)
                             .AsNoTracking()
                             .FirstOrDefaultAsync();
             return Ok(dbOrders);
         }
+
+        [HttpPost]
+        [Route("NextStepOrder")]
+        [Authorize(Roles = "2")]
+        public async Task<IActionResult> NextStepOrder([FromBody] int id)
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = _context.Customers.Where(x => x.Account!.Email == emailClaim).AsNoTracking().FirstOrDefault();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            var dbOrder = await _context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (dbOrder == null)
+            {
+                return BadRequest("Order is empty");
+            }
+            if (dbOrder.Status == "CANCELED")
+            {
+                return BadRequest("Order is canceled");
+            }
+            switch (dbOrder.Status)
+            {
+                case "BOOKED":
+                    dbOrder.Status = "READY";
+                    break;
+                case "READY":
+                    dbOrder.Status = "DELIVERING";
+                    break;
+                case "DELIVERING":
+                    dbOrder.Status = "DONE";
+                    break;
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("CancelOrder")]
+        [Authorize(Roles = "2")]
+        public async Task<IActionResult> CancelOrder([FromBody] int id)
+        {
+            var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+            var dbCustomer = _context.Customers.Where(x => x.Account!.Email == emailClaim).AsNoTracking().FirstOrDefault();
+            if (dbCustomer == null)
+            {
+                return Unauthorized("User not found");
+            }
+            var dbOrder = await _context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (dbOrder == null)
+            {
+                return BadRequest("Order is empty");
+            }
+            if (dbOrder.Status == "CANCELED")
+            {
+                return BadRequest("Order is canceled");
+            }
+            dbOrder.Status = "CANCELED";
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
 
     }    
 }

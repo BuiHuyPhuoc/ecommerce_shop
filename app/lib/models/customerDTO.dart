@@ -5,6 +5,7 @@ class CustomerDTO {
   String email;
   String name;
   String phone;
+  int idRole;
   String nameRole;
   String avatarImageUrl;
   
@@ -13,6 +14,7 @@ class CustomerDTO {
     required this.name,
     required this.phone,
     required this.nameRole,
+    required this.idRole,
     required this.avatarImageUrl,
   });
 
@@ -22,6 +24,7 @@ class CustomerDTO {
       'name': name,
       'phone': phone,
       'nameRole': nameRole,
+      'idRole': idRole,
       'avatarImageUrl': avatarImageUrl,
     };
   }
@@ -33,6 +36,7 @@ class CustomerDTO {
       phone: map['phone'] as String,
       nameRole: map['nameRole'] as String,
       avatarImageUrl: map['avatarImageUrl'] as String,
+      idRole: map['idRole'] as int,
     );
   }
 

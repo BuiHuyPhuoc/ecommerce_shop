@@ -72,7 +72,6 @@ namespace ShopoesAPI
             var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new ArgumentNullException("JWT Key cannot be null.");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
-
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

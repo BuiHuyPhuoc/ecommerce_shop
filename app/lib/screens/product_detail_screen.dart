@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:ecommerce_shop/class/string_format.dart';
 import 'package:ecommerce_shop/models/post_review_request.dart';
 import 'package:ecommerce_shop/models/product.dart';

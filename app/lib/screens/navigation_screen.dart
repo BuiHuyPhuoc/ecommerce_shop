@@ -1,4 +1,5 @@
 import 'package:ecommerce_shop/models/customerDTO.dart';
+import 'package:ecommerce_shop/screens/admin/admin_dashboard_screen.dart';
 import 'package:ecommerce_shop/screens/cart_screen.dart';
 import 'package:ecommerce_shop/screens/home_screen.dart';
 import 'package:ecommerce_shop/screens/setting_screen.dart';
@@ -45,6 +46,17 @@ class NavigationScreenState extends State<NavigationScreen> {
         Logout(context);
       });
     } else {
+      if (nameUser!.idRole == 2) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (builder) => AdminDashboardScreen(),
+            ),
+            (dynamic Route) => false,
+          );
+        });
+      }
       setState(() {
         widget.pageNumber = pageIndex;
       });
@@ -71,6 +83,18 @@ class NavigationScreenState extends State<NavigationScreen> {
           Logout(context);
         });
         return Container();
+      } else {
+        if (nameUser!.idRole == 2) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (builder) => AdminDashboardScreen(),
+            ),
+            (dynamic Route) => false,
+          );
+        });
+      }
       }
     }
 

@@ -36,6 +36,49 @@ Future<List<Order>> GetOrder() async {
   );
 }
 
+Future<List<Order>> GetAllOrder() async {
+  final Dio _dio = Dio();
+  return await ExecuteWithRetry<List<Order>>(
+    () async {
+      var response = await _dio.get(
+        '$baseUrl/Order/GetAllOrder',
+        options: Options(headers: await BuildHeaders(withAuthorization: true)),
+      );
+      return (response.data as List)
+          .map((data) => Order.fromMap(data))
+          .toList();
+    },
+  );
+}
+
+Future<bool> NextStepOrder(int idOrder) async {
+  final Dio _dio = Dio();
+  return await ExecuteWithRetry<bool>(
+    () async {
+      await _dio.post(
+        '$baseUrl/Order/NextStepOrder',
+        options: Options(headers: await BuildHeaders(withAuthorization: true)),
+        data: jsonEncode(idOrder),
+      );
+      return true;
+    },
+  );
+}
+
+Future<bool> CancelOrder(int idOrder) async {
+  final Dio _dio = Dio();
+  return await ExecuteWithRetry<bool>(
+    () async {
+      await _dio.post(
+        '$baseUrl/Order/CancelOrder',
+        options: Options(headers: await BuildHeaders(withAuthorization: true)),
+        data: jsonEncode(idOrder),
+      );
+      return true;
+    },
+  );
+}
+
 Future<Order> GetOrderDetail(int id) async {
   final Dio _dio = Dio();
   return await ExecuteWithRetry<Order>(

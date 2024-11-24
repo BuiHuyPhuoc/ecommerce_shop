@@ -1,3 +1,4 @@
+import 'package:ecommerce_shop/screens/admin/admin_show_order.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -35,6 +36,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   scrollDirection: Axis.horizontal,
                   children: [
                     ReportCard(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (builder) => AdminShowOrder(),
+                          ),
+                        );
+                      },
                       context: context,
                       title: "Order",
                       icon: Icon(
@@ -89,58 +98,62 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       required String title,
       String? content,
       required double value,
-      Color? backgroundColor}) {
+      Color? backgroundColor,
+      VoidCallback? onTap}) {
     return AspectRatio(
       aspectRatio: 10 / 11,
-      child: Container(
-        padding: EdgeInsets.all(20),
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: backgroundColor ??
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.6),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                icon ??
-                    Icon(
-                      Icons.assignment,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: backgroundColor ??
+                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.6),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  icon ??
+                      Icon(
+                        Icons.assignment,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                  SizedBox(width: 6),
+                  Text(
+                    title,
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
-                SizedBox(width: 6),
-                Text(
-                  title,
-                  style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
-                )
-              ],
-            ),
-            Text(
-              value.toString(),
-              style: GoogleFonts.roboto(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  )
+                ],
               ),
-            ),
-            Text(
-              content ?? "Manage your order now!",
-              maxLines: 3, // Giới hạn số dòng hiển thị (ở đây là 2 dòng)
-              overflow:
-                  TextOverflow.ellipsis, // Hiển thị dấu ba chấm khi quá dài
-              style: GoogleFonts.lexendDeca(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              Text(
+                value.toString(),
+                style: GoogleFonts.roboto(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
-            )
-          ],
+              Text(
+                content ?? "Manage your order now!",
+                maxLines: 3, // Giới hạn số dòng hiển thị (ở đây là 2 dòng)
+                overflow:
+                    TextOverflow.ellipsis, // Hiển thị dấu ba chấm khi quá dài
+                style: GoogleFonts.lexendDeca(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

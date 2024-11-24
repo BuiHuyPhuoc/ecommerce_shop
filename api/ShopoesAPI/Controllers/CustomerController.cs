@@ -72,6 +72,7 @@ namespace ShopoesAPI.Controllers
                     Phone = dbCustomer.Phone,
                     NameRole = dbCustomer.IdRoleNavigation.NameRole,
                     AvatarImageUrl = dbCustomer.AvatarImageUrl,
+                    IdRole = dbCustomer.IdRole,
                 };
                 return Ok(returnCustomer);
             }
@@ -121,6 +122,7 @@ namespace ShopoesAPI.Controllers
                     Phone = dbCustomer.Phone,
                     NameRole = dbCustomer.IdRoleNavigation.NameRole,
                     AvatarImageUrl = dbCustomer.AvatarImageUrl,
+                    IdRole = dbCustomer.IdRole,
                 });
             }
         }

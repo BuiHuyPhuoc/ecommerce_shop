@@ -23,6 +23,9 @@ Future<T> ExecuteWithRetry<T>(Future<T> Function() request) async {
   try {
     return await request();
   } on DioError catch (e) {
+    if (e.response?.statusCode == 403) {
+      throw TimeoutException("Unauthorized.");
+    }
     if (e.response?.statusCode == 401) {
       bool tokenRefreshed = await RequestNewToken();
       if (tokenRefreshed) {
