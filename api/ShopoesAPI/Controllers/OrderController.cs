@@ -60,27 +60,23 @@ namespace ShopoesAPI.Controllers
                     {
                         return BadRequest("Cart is empty");
                     }
-                    var getProductVarient = dbCart.IdProductVarientNavigation;
-                    var getProduct = getProductVarient.IdProductNavigation;
-                    if (getProduct == null)
+                    var dbProduct = dbCart.IdProductVarientNavigation.IdProductNavigation;
+                    if (dbProduct!.NewPrice!= null 
+                        && dbProduct!.NewPrice < dbProduct!.PriceProduct)
                     {
-                        return BadRequest("Product not found");
-                    }
-                    if (getProduct.NewPrice != null && getProduct.NewPrice < getProduct.PriceProduct)
-                    {
-                        amount += (decimal)getProduct.NewPrice;
+                        amount += (decimal)dbProduct.NewPrice * dbCart.Quantity;
                     }
                     else
                     {
-                        amount += getProduct.PriceProduct;
+                        amount += dbProduct.PriceProduct * dbCart.Quantity;
                     }
                     var newOrderDetail = new OrderDetail
                     {
                         IdOrder = newOrder.Id,
-                        IdProduct = getProduct.Id,
-                        ProductName = getProduct.NameProduct + $" (Size: {getProductVarient.Size})",
-                        ProductPrice = getProduct.PriceProduct,
-                        SalePrice = getProduct.NewPrice ?? getProduct.PriceProduct,
+                        IdProductVarient = dbCart.IdProductVarient,
+                        ProductName = dbProduct.NameProduct + $" (Size: {dbCart.IdProductVarientNavigation.Size})",
+                        ProductPrice = dbProduct.PriceProduct,
+                        SalePrice = dbProduct.NewPrice ?? dbProduct.PriceProduct,
                         Quantity = dbCart.Quantity
                     };
                     _context.OrderDetails.Add(newOrderDetail);
@@ -152,11 +148,13 @@ namespace ShopoesAPI.Controllers
             var dbOrders = await _context.Orders
                             .Include(x => x.IdAddressNavigation)
                             .Include(x => x.OrderDetails)
-                            .ThenInclude(y => y.IdProductNavigation)
-                            .ThenInclude(z => z.IdBrandNavigation)
+                            .ThenInclude(y => y.IdProductVarientNavigation)
+                            .ThenInclude(t => t.IdProductNavigation)
+                            .ThenInclude(z => z!.IdBrandNavigation)
                             .Include(x => x.OrderDetails)
-                            .ThenInclude(y => y.IdProductNavigation)
-                            .ThenInclude(z => z.IdCategoryNavigation)
+                            .ThenInclude(y => y.IdProductVarientNavigation)
+                            .ThenInclude(t => t.IdProductNavigation)
+                            .ThenInclude(z => z!.IdCategoryNavigation)
                             .Where(x => x.Id == id)
                             .AsNoTracking()
                             .FirstOrDefaultAsync();
@@ -174,7 +172,7 @@ namespace ShopoesAPI.Controllers
             {
                 return Unauthorized("User not found");
             }
-            var dbOrder = await _context.Orders.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var dbOrder = await _context.Orders.Where(x => x.Id == id).Include(x => x.OrderDetails).FirstOrDefaultAsync();
             if (dbOrder == null)
             {
                 return BadRequest("Order is empty");
@@ -182,6 +180,10 @@ namespace ShopoesAPI.Controllers
             if (dbOrder.Status == "CANCELED")
             {
                 return BadRequest("Order is canceled");
+            }
+            foreach(var orderDetail in  dbOrder.OrderDetails)
+            {
+                
             }
             switch (dbOrder.Status)
             {
@@ -197,6 +199,11 @@ namespace ShopoesAPI.Controllers
             }
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        private void ChangeQuantityFromOrder(int idOrder)
+        {
+
         }
 
         [HttpPost]
@@ -223,7 +230,5 @@ namespace ShopoesAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-
-
     }    
 }

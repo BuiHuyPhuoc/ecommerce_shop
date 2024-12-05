@@ -132,7 +132,7 @@ public partial class ShopoesDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.IdOrder, e.IdProduct }).HasName("PK__OrderDet__9167A4641D8B6ECD");
+            entity.HasKey(e => new { e.IdOrder, e.IdProductVarient });
 
             entity.Property(e => e.ProductName).HasMaxLength(255);
 
@@ -141,10 +141,9 @@ public partial class ShopoesDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__OrderDeta__IdOrd__45F365D3");
 
-            entity.HasOne(d => d.IdProductNavigation).WithMany(p => p.OrderDetails)
-                .HasForeignKey(d => d.IdProduct)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__OrderDeta__IdPro__440B1D61");
+            entity.HasOne(d => d.IdProductVarientNavigation).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.IdProductVarient)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Product>(entity =>

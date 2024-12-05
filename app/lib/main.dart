@@ -71,6 +71,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, ThemeProvider, child) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             home: NavigationScreen(),
             theme: ThemeProvider.themeData,
           );

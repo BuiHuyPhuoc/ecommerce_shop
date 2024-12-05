@@ -254,8 +254,9 @@ namespace ShopoesAPI.Migrations
                     b.Property<int>("IdOrder")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdProduct")
-                        .HasColumnType("int");
+                    b.Property<int>("IdProductVarient")
+                        .HasColumnType("int")
+                        .HasColumnName("IdProductVarient");
 
                     b.Property<string>("ProductName")
                         .HasMaxLength(255)
@@ -270,10 +271,9 @@ namespace ShopoesAPI.Migrations
                     b.Property<decimal?>("SalePrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("IdOrder", "IdProduct")
-                        .HasName("PK__OrderDet__9167A4641D8B6ECD");
+                    b.HasKey("IdOrder", "IdProductVarient");
 
-                    b.HasIndex("IdProduct");
+                    b.HasIndex("IdProductVarient");
 
                     b.ToTable("OrderDetails");
                 });
@@ -542,15 +542,14 @@ namespace ShopoesAPI.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__OrderDeta__IdOrd__45F365D3");
 
-                    b.HasOne("ShopoesAPI.Models.Product", "IdProductNavigation")
+                    b.HasOne("ShopoesAPI.Models.ProductVarient", "IdProductVarientNavigation")
                         .WithMany("OrderDetails")
-                        .HasForeignKey("IdProduct")
-                        .IsRequired()
-                        .HasConstraintName("FK__OrderDeta__IdPro__440B1D61");
+                        .HasForeignKey("IdProductVarient")
+                        .IsRequired();
 
                     b.Navigation("IdOrderNavigation");
 
-                    b.Navigation("IdProductNavigation");
+                    b.Navigation("IdProductVarientNavigation");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Product", b =>
@@ -661,8 +660,6 @@ namespace ShopoesAPI.Migrations
 
             modelBuilder.Entity("ShopoesAPI.Models.Product", b =>
                 {
-                    b.Navigation("OrderDetails");
-
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVarients");
@@ -673,6 +670,8 @@ namespace ShopoesAPI.Migrations
             modelBuilder.Entity("ShopoesAPI.Models.ProductVarient", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Role", b =>

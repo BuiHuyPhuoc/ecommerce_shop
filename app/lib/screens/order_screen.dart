@@ -311,10 +311,10 @@ class _OrderScreenState extends State<OrderScreen> {
   double GetTotalPrice() {
     double sumTotal = 0;
     for (var i = 0; i < widget.listCarts.length; i++) {
-      sumTotal += widget.listCarts[i].idProductVarientNavigation
+      sumTotal += (widget.listCarts[i].idProductVarientNavigation
               .idProductNavigation!.newPrice ??
           widget.listCarts[i].idProductVarientNavigation.idProductNavigation!
-              .priceProduct;
+              .priceProduct)*widget.listCarts[i].quantity;
     }
     return sumTotal;
   }
@@ -428,7 +428,7 @@ Widget OrderItem(BuildContext context, Cart cart) {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: "1",
+                            text: cart.quantity.toString(),
                             style: TextStyle(
                                 fontSize: 14,
                                 color:

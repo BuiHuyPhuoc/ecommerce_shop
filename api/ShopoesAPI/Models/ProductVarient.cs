@@ -21,5 +21,7 @@ public partial class ProductVarient
 
     [JsonIgnore]
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    [JsonIgnore]
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
 }

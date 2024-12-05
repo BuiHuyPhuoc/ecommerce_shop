@@ -260,14 +260,14 @@ class _CartScreenState extends State<CartScreen> {
     double sumTotal = 0;
     for (var i = 0; i < _indexSelectedProduct.length; i++) {
       if (_indexSelectedProduct[i]) {
-        sumTotal += listCarts[i]
+        sumTotal += (listCarts[i]
                 .idProductVarientNavigation
                 .idProductNavigation!
                 .newPrice ??
             listCarts[i]
                 .idProductVarientNavigation
                 .idProductNavigation!
-                .priceProduct;
+                .priceProduct)*listCarts[i].quantity;
       }
     }
     return sumTotal;

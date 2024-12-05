@@ -56,7 +56,7 @@ namespace ShopoesAPI.Controllers
                 .Include(x => x.ProductImages)
                 .Include(x => x.Reviews).ThenInclude(y => y.IdCustomerNavigation)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            var dbReview = _context.Reviews.Where(x => x.IdProduct == dbProduct!.Id).AsNoTracking().Average(x => x.Rating);
+            //var dbReview = _context.Reviews.Where(x => x.IdProduct == dbProduct!.Id).AsNoTracking().Average(x => x.Rating);
             
             if (dbProduct == null)
             {

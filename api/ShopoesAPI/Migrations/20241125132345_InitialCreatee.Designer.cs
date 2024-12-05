@@ -12,8 +12,8 @@ using ShopoesAPI.Models;
 namespace ShopoesAPI.Migrations
 {
     [DbContext(typeof(ShopoesDbContext))]
-    [Migration("20241101063334_AddColumnAddress")]
-    partial class AddColumnAddress
+    [Migration("20241125132345_InitialCreatee")]
+    partial class InitialCreatee
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,10 @@ namespace ShopoesAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverPhone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -219,11 +223,14 @@ namespace ShopoesAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
+
+                    b.Property<int>("IdAddress")
+                        .HasColumnType("int");
 
                     b.Property<int>("IdCustomer")
                         .HasColumnType("int");
@@ -238,6 +245,8 @@ namespace ShopoesAPI.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Orders__3214EC07D701579F");
 
+                    b.HasIndex("IdAddress");
+
                     b.HasIndex(new[] { "IdCustomer" }, "IX_Orders_IdCustomer");
 
                     b.ToTable("Orders");
@@ -248,26 +257,26 @@ namespace ShopoesAPI.Migrations
                     b.Property<int>("IdOrder")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdProduct")
-                        .HasColumnType("int");
+                    b.Property<int>("IdProductVarient")
+                        .HasColumnType("int")
+                        .HasColumnName("IdProductVarient");
 
                     b.Property<string>("ProductName")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<double?>("ProductPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("ProductPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<double?>("SalePrice")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("SalePrice")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("IdOrder", "IdProduct")
-                        .HasName("PK__OrderDet__9167A4641D8B6ECD");
+                    b.HasKey("IdOrder", "IdProductVarient");
 
-                    b.HasIndex("IdProduct");
+                    b.HasIndex("IdProductVarient");
 
                     b.ToTable("OrderDetails");
                 });
@@ -432,6 +441,8 @@ namespace ShopoesAPI.Migrations
                     b.HasKey("Id")
                         .HasName("PK__Reviews__3214EC07A6E4E31B");
 
+                    b.HasIndex("IdProduct");
+
                     b.HasIndex(new[] { "IdCustomer" }, "IX_Reviews_IdCustomer");
 
                     b.ToTable("Reviews");
@@ -510,11 +521,18 @@ namespace ShopoesAPI.Migrations
 
             modelBuilder.Entity("ShopoesAPI.Models.Order", b =>
                 {
+                    b.HasOne("ShopoesAPI.Models.Address", "IdAddressNavigation")
+                        .WithMany("Orders")
+                        .HasForeignKey("IdAddress")
+                        .IsRequired();
+
                     b.HasOne("ShopoesAPI.Models.Customer", "IdCustomerNavigation")
                         .WithMany("Orders")
                         .HasForeignKey("IdCustomer")
                         .IsRequired()
                         .HasConstraintName("FK__Orders__IdCustom__4222D4EF");
+
+                    b.Navigation("IdAddressNavigation");
 
                     b.Navigation("IdCustomerNavigation");
                 });
@@ -527,15 +545,14 @@ namespace ShopoesAPI.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__OrderDeta__IdOrd__45F365D3");
 
-                    b.HasOne("ShopoesAPI.Models.Product", "IdProductNavigation")
+                    b.HasOne("ShopoesAPI.Models.ProductVarient", "IdProductVarientNavigation")
                         .WithMany("OrderDetails")
-                        .HasForeignKey("IdProduct")
-                        .IsRequired()
-                        .HasConstraintName("FK__OrderDeta__IdPro__440B1D61");
+                        .HasForeignKey("IdProductVarient")
+                        .IsRequired();
 
                     b.Navigation("IdOrderNavigation");
 
-                    b.Navigation("IdProductNavigation");
+                    b.Navigation("IdProductVarientNavigation");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Product", b =>
@@ -596,12 +613,24 @@ namespace ShopoesAPI.Migrations
                         .IsRequired()
                         .HasConstraintName("FK__Reviews__IdCusto__412EB0B6");
 
+                    b.HasOne("ShopoesAPI.Models.Product", "IdProductNavigation")
+                        .WithMany("Reviews")
+                        .HasForeignKey("IdProduct")
+                        .IsRequired();
+
                     b.Navigation("IdCustomerNavigation");
+
+                    b.Navigation("IdProductNavigation");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Account", b =>
                 {
                     b.Navigation("RefreshToken");
+                });
+
+            modelBuilder.Entity("ShopoesAPI.Models.Address", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Brand", b =>
@@ -634,16 +663,18 @@ namespace ShopoesAPI.Migrations
 
             modelBuilder.Entity("ShopoesAPI.Models.Product", b =>
                 {
-                    b.Navigation("OrderDetails");
-
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVarients");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.ProductVarient", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("ShopoesAPI.Models.Role", b =>
