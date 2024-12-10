@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopoesAPI.DTOs;
+using ShopoesAPI.DTOs.Order;
 using ShopoesAPI.Models;
 using System.Security.Claims;
 

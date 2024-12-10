@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using ShopoesAPI.DTOs;
+using ShopoesAPI.DTOs.Address;
 using ShopoesAPI.Function;
 using ShopoesAPI.Models;
 using System.Runtime.InteropServices;

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace ShopoesAPI.DTOs
+namespace ShopoesAPI.DTOs.Auth
 {
     public class CustomerRegisterDTO
     {

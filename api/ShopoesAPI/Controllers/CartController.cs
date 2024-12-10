@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using ShopoesAPI.DTOs;
+using ShopoesAPI.DTOs.Cart;
 using ShopoesAPI.Models;
 using System.Security.Claims;
 

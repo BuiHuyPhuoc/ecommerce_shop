@@ -1,6 +1,6 @@
 ﻿using ShopoesAPI.Models;
 
-namespace ShopoesAPI.DTOs
+namespace ShopoesAPI.DTOs.Order
 {
     public class OrderRequest
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ShopoesAPI.DTOs
+namespace ShopoesAPI.DTOs.Address
 {
     public class AddAddressDTO
     {

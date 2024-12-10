@@ -33,8 +33,6 @@ namespace ShopoesAPI
                 options.JsonSerializerOptions.Converters.Add(new DoubleConverter());
                 options.JsonSerializerOptions.Converters.Add(new DecimalConverter());
             });
-            //builder.Services.AddControllers().AddNewtonsoftJson(x =>
-            //    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>

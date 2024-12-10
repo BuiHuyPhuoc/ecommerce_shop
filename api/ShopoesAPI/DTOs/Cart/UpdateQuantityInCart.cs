@@ -1,4 +1,4 @@
-﻿ namespace ShopoesAPI.DTOs
+﻿namespace ShopoesAPI.DTOs.Cart
 {
     public class UpdateQuantityInCart
     {

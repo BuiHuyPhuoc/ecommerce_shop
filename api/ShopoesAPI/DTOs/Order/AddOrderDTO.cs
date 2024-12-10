@@ -1,7 +1,7 @@
 ﻿using ShopoesAPI.Models;
 using System.Text.Json.Serialization;
 
-namespace ShopoesAPI.DTOs
+namespace ShopoesAPI.DTOs.Order
 {
     public class AddOrderCartDTO
     {

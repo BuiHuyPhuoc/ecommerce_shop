@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ShopoesAPI.DTOs;
+using ShopoesAPI.DTOs.Auth;
+using ShopoesAPI.DTOs.Customer;
 using ShopoesAPI.Function;
 using ShopoesAPI.Models;
 using System.Security.Claims;

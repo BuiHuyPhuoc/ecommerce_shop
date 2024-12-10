@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ShopoesAPI.Models;
+namespace ShopoesAPI.DTOs.Brand;
 
 public partial class BrandDTO
 {

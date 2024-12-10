@@ -1,4 +1,4 @@
-﻿namespace ShopoesAPI.DTOs
+﻿namespace ShopoesAPI.DTOs.Product
 {
     public class FilterProductRequest
     {

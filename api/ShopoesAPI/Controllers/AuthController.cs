@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ShopoesAPI.DTOs;
+using ShopoesAPI.DTOs.Auth;
 using ShopoesAPI.Function;
 using ShopoesAPI.Models;
 using System.IdentityModel.Tokens.Jwt;

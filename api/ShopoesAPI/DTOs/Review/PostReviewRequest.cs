@@ -1,4 +1,4 @@
-﻿namespace ShopoesAPI.DTOs
+﻿namespace ShopoesAPI.DTOs.Review
 {
     public class PostReviewRequest
     {
